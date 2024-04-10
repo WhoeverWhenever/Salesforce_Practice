@@ -1,0 +1,14 @@
+<apex:page standardController="Job_Application__c" recordSetVar="JobApplications">
+    <apex:pageBlock title="Job Applications">
+        <apex:pageBlockTable value="{!JobApplications}" var="jobApplication">
+            <apex:column headerValue="Number" value="{!jobApplication.Name}" />
+            <apex:column headerValue="Position" value="{!jobApplication.Position__c}" />
+            <apex:column headerValue="Candidate" value="{!jobApplication.Candidate__c}" />
+            <apex:column headerValue="Status" value="{!jobApplication.Status__c}" />
+            <apex:column headerValue="Average Rating" value="{!jobApplication.Average_Rating__c}" />
+            <apex:column headerValue="Details">
+                <apex:outputLink value="{!URLFOR($Action.Job_Application__c.View, jobApplication.Id)}">View Details</apex:outputLink>
+            </apex:column>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>
