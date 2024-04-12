@@ -1,11 +1,40 @@
 @isTest
 private with sharing class RecruitingAppUtilitiesTest {
+
+    @isTest
+    static void getJobApplicationServiceTest() {
+        User u1 = TestFactory.getUser('userRecruiter', 'Recruiter');
+        User u2 = TestFactory.getUser('employeeUser', 'Standard Employee');
+        System.runAs(u1){
+            TestFactory.generateCandidatesWithApplicationsAndReviews(5);
+        }
+        System.runAs(u2){
+            TestFactory.generateCandidatesWithApplicationsAndReviews(3);
+        }
+        List<Job_Application__c> jobApplications = [SELECT Id, Candidate__r.Owner.Profile.Name FROM Job_Application__c WHERE Candidate__r.Owner.Profile.Name = 'Recruiter'];
+        List<Job_Application__c> updatedJobApplications = new List<Job_Application__c>();
+        for (Integer i = 0; i < jobApplications.size(); i++){
+            if(Math.mod(i, 2) != 0){
+                Test.setCreatedDate(jobApplications[i].Id, Date.today().addDays(-10));
+                updatedJobApplications.add(jobApplications[i]);
+            }
+        }
+        update updatedJobApplications;
+
+
+        Test.startTest();
+        List<Job_Application__c> testJobApplications = RecruitingAppUtilities.getRecentRecruiterJobApplications(7);
+        Test.stopTest();
+
+        Assert.areEqual(3, testJobApplications.size(), 'Expected 3 records');
+    }
+
     @isTest
     static void findWordTest() {
         
         List<Id> fixedSearchResults= new List<Id>();
 
-        CandidateTestFactory.generateCandidatesWithApplicationsAndReviews(7);
+        TestFactory.generateCandidatesWithApplicationsAndReviews(7);
         Candidate__c candidate = [SELECT Id, Email__c FROM Candidate__c WHERE Name = 'TestName3'];
         Test.setCreatedDate(candidate.Id, Date.today().addDays(-7));
         candidate.Email__c = 'develop@example.com';
