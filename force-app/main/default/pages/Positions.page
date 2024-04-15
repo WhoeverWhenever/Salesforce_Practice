@@ -1,0 +1,24 @@
+<apex:page controller="PositionController">
+    <apex:form>
+        <span style="padding: 0px 5px 0px 10px; font-size: 14px; font-weight: 700;">Select Filter Option</span>
+        <apex:selectList value="{!selectedFilterOption}" size="1" multiselect="false">
+            <apex:selectOptions value="{!filterOptions}"/>
+            <apex:actionSupport event="onchange" rerender="positionTable" />
+        </apex:selectList>
+     <apex:pageBlock title="Positions">
+        <apex:pageBlockTable value="{!Positions}" var="position" id="positionTable">
+            <apex:column headerValue="Position Title" value="{!position.Name}" />
+            <apex:column headerValue="Status">
+                <apex:inputField value="{!position.Status__c}" />
+            </apex:column>
+            <apex:column headerValue="Opened Date" value="{!position.Opened_Date__c}" />
+            <apex:column headerValue="Closed Date" value="{!position.Closed_Date__c}" />
+            <apex:column headerValue="Min Pay" value="{!position.Min_Pay__c}" />
+            <apex:column headerValue="Max Pay" value="{!position.Max_Pay__c}" />
+        </apex:pageBlockTable>
+        <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" value="Save" rerender="positionTable"/>
+            </apex:pageBlockButtons>
+     </apex:pageBlock>
+    </apex:form>
+</apex:page>
