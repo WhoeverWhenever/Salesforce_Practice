@@ -2,7 +2,7 @@ public with sharing class PositionController {
 
     List<SelectOption> filterOptions {get;set;}
     List<Position__c> positions {get;set;}
-    public String selectedFilterOption {get;set;}
+    public String selectedFilterOption {get;set;} {selectedFilterOption = 'None';}
 
     public List<SelectOption> getFilterOptions(){
         filterOptions = new List<SelectOption>();
@@ -16,21 +16,17 @@ public with sharing class PositionController {
         return filterOptions;
     }
 
+
+
     public List<Position__c> getPositions() {
-        switch on selectedFilterOption {
-            when 'Open' {
-                positions = [SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c WHERE Status__c = :selectedFilterOption]; 
-                return positions;
-            }	
-            when 'Closed' {
-                positions = [SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c WHERE Status__c = :selectedFilterOption]; 
-                return positions;
-            }
-            when else {
-                positions = [SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c]; 
-                return positions;
-            }
+        String positionQuery = 'SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c';
+        if(selectedFilterOption.equals('None') || String.isBlank(selectedFilterOption)){
+            positions = Database.query(positionQuery);
         }
+        else if (selectedFilterOption.length() > 0){
+            positions = Database.query(positionQuery + ' WHERE Status__c = :selectedFilterOption');
+        }
+        return positions;
     }
 
     public void save(){
