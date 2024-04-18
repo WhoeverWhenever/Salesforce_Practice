@@ -2,14 +2,14 @@
     <lightning-card title="Filter Table Records">
         <div class="slds-m-around_medium">
             <lightning-combobox
+                style="margin-bottom: 5px;"
                 name="filterDropdown"
-                label="Filter By"
+                label="Filter By Status"
                 value={selectedFilterOption}
                 options={filterOptions}
                 onchange={handleFilterChange}>
             </lightning-combobox>
             <template if:true={positions}>
-          
                 <c-custom-dt-type-lwc
                 key-field="Id"
                 data={positions} 
@@ -20,10 +20,8 @@
                 oncellchange={handleCellChange}
                 oncancel={handleCancel}
                 hide-checkbox-column 
-                show-row-number-column
-            >
-           
-            </c-custom-dt-type-lwc>
+                show-row-number-column>
+                </c-custom-dt-type-lwc>
             </template>
         </div>
     </lightning-card>

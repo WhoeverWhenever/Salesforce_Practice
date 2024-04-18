@@ -31,7 +31,6 @@ export default class Positions extends LightningElement {
     columns = columns;
 
     @track positions;
-    @track positionData=[];
      saveDraftValues = [];
     @track pickListOptions;
     lastSavedData=[];
