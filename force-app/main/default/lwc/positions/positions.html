@@ -1,5 +1,5 @@
 <template>
-    <lightning-card title="Filter Table Records">
+    <lightning-card title="Positions">
         <div class="slds-m-around_medium">
             <lightning-combobox
                 style="margin-bottom: 5px;"
@@ -9,13 +9,6 @@
                 options={filterOptions}
                 onchange={handleFilterChange}>
             </lightning-combobox>
-                <!-- loader -->
-                <div if:true={showSpinner}>
-                    <lightning-spinner
-                        alternative-text="Loading..." variant="brand">
-                    </lightning-spinner>
-                </div>
-                <!-----/loader-------->
                 <div class="slds-var-p-around_small">
                     <template if:true={data}>
                         <c-custom-dt-type-lwc
