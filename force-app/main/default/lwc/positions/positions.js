@@ -25,23 +25,27 @@ const columns = [
     {label:'Max Pay', fieldName:'Max_Pay__c', type:'currency'}
 ];
 
+//selectedFilterOption: '$selectedFilterOption', pickList: '$pickListOptions'}
 
 export default class Positions extends LightningElement {
 
     columns = columns;
-
-    @track positions;
-     saveDraftValues = [];
+    showSpinner = false;
+    @track data = [];
+    @track positionData;
+    @track draftValues = [];
+    lastSavedData = [];
     @track pickListOptions;
-    lastSavedData=[];
-
+ 
     @wire(getObjectInfo, { objectApiName: POSITION_OBJECT })
     objectInfo;
-
+ 
+    //fetch picklist options
     @wire(getPicklistValues, {
         recordTypeId: "$objectInfo.data.defaultRecordTypeId",
         fieldApiName: PICKLIST_FIELD
     })
+ 
     wirePickList({ error, data }) {
         if (data) {
             this.pickListOptions = data.values;
@@ -49,43 +53,47 @@ export default class Positions extends LightningElement {
             console.log(error);
         }
     }
-
-    @wire(getPositions,{selectedFilterOption: '$selectedFilterOption', pickList: '$pickListOptions'})
-    positionList(result) {
-       
-        if(result.data!=null && JSON.stringify(result.data)!='undefined')
-        {
-            this.positions = JSON.parse(JSON.stringify(result.data));
-            this.lastSavedData=this.positions;
-            this.positions.forEach(ele => {
-                ele.pickListOptions=this.pickListOptions;
+ 
+    //here I pass picklist option so that this wire method call after above method
+    @wire(getPositions, {selectedFilterOption: '$selectedFilterOption', pickList: '$pickListOptions'})
+    positionData(result) {
+        this.positionData = result;
+        if (result.data) {
+            this.data = JSON.parse(JSON.stringify(result.data));
+ 
+            this.data.forEach(ele => {
+                ele.pickListOptions = this.pickListOptions;
             })
-        }
-        if (result.error) {
-            this.positions = undefined;
+ 
+            this.lastSavedData = JSON.parse(JSON.stringify(this.data));
+ 
+        } else if (result.error) {
+            this.data = undefined;
         }
     };
-
-    updateColumnData(updatedItem)
-    {
-        let copyData = JSON.parse(JSON.stringify(this.positions));
+ 
+    updateDataValues(updateItem) {
+        let copyData = JSON.parse(JSON.stringify(this.data));
  
         copyData.forEach(item => {
-            if (item.Id === updatedItem.Id) {
-                for (let field in updatedItem) {
-                    item[field] = updatedItem[field];
+            if (item.Id === updateItem.Id) {
+                for (let field in updateItem) {
+                    item[field] = updateItem[field];
                 }
             }
         });
  
-        this.positions = [...copyData];
+        //write changes back to original data
+        this.data = [...copyData];
     }
-
-    updateDraftValuesAndData(updateItem) {
+ 
+    updateDraftValues(updateItem) {
         let draftValueChanged = false;
-        let copyDraftValues = [...this.saveDraftValues];
-
-       copyDraftValues.forEach(item => {
+        let copyDraftValues = [...this.draftValues];
+        //store changed value to do operations
+        //on save. This will enable inline editing &
+        //show standard cancel & save button
+        copyDraftValues.forEach(item => {
             if (item.Id === updateItem.Id) {
                 for (let field in updateItem) {
                     item[field] = updateItem[field];
@@ -95,58 +103,64 @@ export default class Positions extends LightningElement {
         });
  
         if (draftValueChanged) {
-            this.saveDraftValues = [...copyDraftValues];
+            this.draftValues = [...copyDraftValues];
         } else {
-            this.saveDraftValues = [...copyDraftValues, updateItem];
+            this.draftValues = [...copyDraftValues, updateItem];
         }
     }
-
+ 
+    //handler to handle cell changes & update values in draft values
     handleCellChange(event) {
+        //this.updateDraftValues(event.detail.draftValues[0]);
         let draftValues = event.detail.draftValues;
         draftValues.forEach(ele=>{
-            this.updateDraftValuesAndData(ele);
-            this.updateColumnData(ele);
+            this.updateDraftValues(ele);
         })
     }
-
+ 
     handleSave(event) {
-        this.saveDraftValues = event.detail.draftValues;
+        this.showSpinner = true;
+        this.saveDraftValues = this.draftValues;
+ 
         const recordInputs = this.saveDraftValues.slice().map(draft => {
             const fields = Object.assign({}, draft);
             return { fields };
         });
-       
+ 
+        // Updateing the records using the UiRecordAPi
         const promises = recordInputs.map(recordInput => updateRecord(recordInput));
         Promise.all(promises).then(res => {
-            this.ShowToast('Success', 'Records Updated Successfully!', 'success', 'dismissable');
-            this.saveDraftValues = [];
+            this.showToast('Success', 'Records Updated Successfully!', 'success', 'dismissable');
+            this.draftValues = [];
             return this.refresh();
         }).catch(error => {
-            this.ShowToast('Error', 'An Error Occured!!', 'error', 'dismissable');
+            console.log(error);
+            this.showToast('Error', 'An Error Occured!!', 'error', 'dismissable');
         }).finally(() => {
-            this.saveDraftValues = [];
+            this.draftValues = [];
+            this.showSpinner = false;
         });
     }
-
+ 
     handleCancel(event) {
-        let savepicklist=this.pickListOptions;
-        this.positions =[];
-        this.pickListOptions=null;
-        this.pickListOptions=savepicklist;
-    }
-
-    ShowToast(title, message, variant, mode){
-        const evt = new ShowToastEvent({
-                title: title,
-                message:message,
-                variant: variant,
-                mode: mode
-            });
-            this.dispatchEvent(evt);
+        //remove draftValues & revert data changes
+        this.data = JSON.parse(JSON.stringify(this.lastSavedData));
+        this.draftValues = [];
     }
  
+    showToast(title, message, variant, mode) {
+        const evt = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant,
+            mode: mode
+        });
+        this.dispatchEvent(evt);
+    }
+ 
+    // This function is used to refresh the table once data updated
     async refresh() {
-        await refreshApex(this.positions);
+        await refreshApex(this.positionData);
     }
 
     @track selectedFilterOption = 'None';
@@ -160,6 +174,7 @@ export default class Positions extends LightningElement {
 
     handleFilterChange(event){
         this.selectedFilterOption = event.detail.value;
+        refreshApex(this.positionData);
     }
 
 }

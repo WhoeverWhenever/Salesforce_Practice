@@ -9,20 +9,28 @@
                 options={filterOptions}
                 onchange={handleFilterChange}>
             </lightning-combobox>
-            <template if:true={positions}>
-                <c-custom-dt-type-lwc
-                key-field="Id"
-                data={positions} 
-                columns={columns} 
-                draft-values={saveDraftValues} 
-                onsave={handleSave}
-                ontoggelselect={handletoggelselect}
-                oncellchange={handleCellChange}
-                oncancel={handleCancel}
-                hide-checkbox-column 
-                show-row-number-column>
-                </c-custom-dt-type-lwc>
-            </template>
+                <!-- loader -->
+                <div if:true={showSpinner}>
+                    <lightning-spinner
+                        alternative-text="Loading..." variant="brand">
+                    </lightning-spinner>
+                </div>
+                <!-----/loader-------->
+                <div class="slds-var-p-around_small">
+                    <template if:true={data}>
+                        <c-custom-dt-type-lwc
+                            key-field="Id"
+                            data={data} 
+                            columns={columns} 
+                            onvalueselect={handleSelection}
+                            draft-values={draftValues} 
+                            oncellchange={handleCellChange}
+                            onsave={handleSave}
+                            oncancel={handleCancel}
+                            hide-checkbox-column>
+                        </c-custom-dt-type-lwc>
+                    </template>
+                </div>
         </div>
     </lightning-card>
 </template>
