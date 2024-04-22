@@ -26,8 +26,9 @@ private with sharing class PositionControllerLWCTest {
         try {
             renderedPositions = PositionControllerLWC.getPositions(null);
             Assert.fail('An exception should have been thrown');
-          } catch (Exception e) {
+        } 
+        catch (Exception e) {
             
-          }
+        }
     }
 }

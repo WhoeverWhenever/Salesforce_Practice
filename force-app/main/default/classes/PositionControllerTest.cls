@@ -40,6 +40,5 @@ public with sharing class PositionControllerTest {
         controller.save();
         renderedPositions = controller.getPositions();
         System.assertEquals(1, renderedPositions.size());
-
     }
 }

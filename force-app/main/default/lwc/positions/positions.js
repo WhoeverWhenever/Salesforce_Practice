@@ -1,4 +1,4 @@
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
 import getPositions from '@salesforce/apex/PositionControllerLWC.getPositions';
 
 import { updateRecord } from 'lightning/uiRecordApi';
@@ -28,10 +28,10 @@ export default class Positions extends LightningElement {
 
     columns = columns;
     showSpinner = false;
+    lastSavedData = [];
     @track data = [];
     @track positionData;
     @track draftValues = [];
-    lastSavedData = [];
     @track pickListOptions;
  
     @wire(getObjectInfo, { objectApiName: POSITION_OBJECT })
@@ -112,6 +112,7 @@ export default class Positions extends LightningElement {
  
         const recordInputs = this.saveDraftValues.slice().map(draft => {
             const fields = Object.assign({}, draft);
+
             return { fields };
         });
  
@@ -119,6 +120,7 @@ export default class Positions extends LightningElement {
         Promise.all(promises).then(res => {
             this.showToast('Success', 'Records Updated Successfully!', 'success', 'dismissable');
             this.draftValues = [];
+
             return this.refresh();
         }).catch(error => {
             console.log(error);
@@ -148,7 +150,7 @@ export default class Positions extends LightningElement {
         await refreshApex(this.positionData);
     }
 
-    @track selectedFilterOption = 'None';
+    @api selectedFilterOption = 'None';
     @track filterOptions = [
         {label:'None', value:'None'},
         {label:'Open', value:'Open'},
@@ -161,5 +163,4 @@ export default class Positions extends LightningElement {
         this.selectedFilterOption = event.detail.value;
         refreshApex(this.positionData);
     }
-
 }

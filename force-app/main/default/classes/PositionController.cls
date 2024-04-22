@@ -12,11 +12,10 @@ public with sharing class PositionController {
         filterOptions.add(new SelectOption('None', 'None'));
 		for( Schema.PicklistEntry pickListVal : ple){
             filterOptions.add(new SelectOption(pickListVal.getLabel(), pickListVal.getLabel()));
-		}     
+		} 
+
         return filterOptions;
     }
-
-
 
     public List<Position__c> getPositions() {
         String positionQuery = 'SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c';
@@ -26,6 +25,7 @@ public with sharing class PositionController {
         else if (selectedFilterOption.length() > 0){
             positions = Database.query(positionQuery + ' WHERE Status__c = :selectedFilterOption');
         }
+
         return positions;
     }
 

@@ -1,16 +1,18 @@
 @isTest
 private with sharing class RecruitingAppUtilitiesTest {
-
     @isTest
     static void getJobApplicationServiceTest() {
         User u1 = TestFactory.getUser('userRecruiter', 'Recruiter');
         User u2 = TestFactory.getUser('employeeUser', 'Standard Employee');
+
         System.runAs(u1){
             TestFactory.generateCandidatesWithApplicationsAndReviews(5);
         }
+
         System.runAs(u2){
             TestFactory.generateCandidatesWithApplicationsAndReviews(3);
         }
+
         List<Job_Application__c> jobApplications = [SELECT Id, Candidate__r.Owner.Profile.Name FROM Job_Application__c WHERE Candidate__r.Owner.Profile.Name = 'Recruiter'];
         List<Job_Application__c> updatedJobApplications = new List<Job_Application__c>();
         for (Integer i = 0; i < jobApplications.size(); i++){
@@ -73,4 +75,3 @@ private with sharing class RecruitingAppUtilitiesTest {
         Assert.areEqual(5, result[2].size(), 'Expected 5 records of Reviews');
     }
 }
-

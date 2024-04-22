@@ -1,7 +1,9 @@
 @isTest
 public with sharing class PositionControllerTestFactory {
     public static List<Position__c> getTestPositions() {
+
         List<Position__c> testPositions = new List<Position__c>();
+        
         testPositions.add(new Position__c(Name = 'Test Position 1', Status__c = 'Open',
                                           Description__c = 'Some Description', Skills__c = 'JS',
                                           Location__c = 'Filler'));
@@ -26,6 +28,7 @@ public with sharing class PositionControllerTestFactory {
         testPositions.add(new Position__c(Name = 'Test Position 8', Status__c = 'Closed Cancelled',
                                           Description__c = 'Some Description', Skills__c = 'JS',
                                           Location__c = 'Filler'));
+
         return testPositions;
     }
 }

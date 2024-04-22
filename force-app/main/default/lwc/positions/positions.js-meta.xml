@@ -4,5 +4,11 @@
     <isExposed>true</isExposed>
     <targets>
         <target>lightning__Tab</target>
+        <target>lightning__AppPage</target>
     </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage">
+        <property name="selectedFilterOption" type="String" default="None" label="Select the Filter Option" datasource="None,Open,Closed,Open Hot,Closed Cancelled"/>
+        </targetConfig>
+    </targetConfigs>
 </LightningComponentBundle>

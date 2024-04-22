@@ -1,5 +1,7 @@
 public with sharing class PositionControllerLWC {
+
     static List<Position__c> positions {get;set;}
+    
     @AuraEnabled (cacheable=true)
     public static List<Position__c> getPositions(String selectedFilterOption){
         try {
@@ -10,7 +12,9 @@ public with sharing class PositionControllerLWC {
             else if (selectedFilterOption.length() > 0){
                 positions = Database.query(positionQuery + ' WHERE Status__c = :selectedFilterOption');
             }
+
             return positions;
+
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
