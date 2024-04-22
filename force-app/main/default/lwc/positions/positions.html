@@ -9,6 +9,14 @@
                 options={filterOptions}
                 onchange={handleFilterChange}>
             </lightning-combobox>
+        </div>
+    </lightning-card>
+    <lightning-card  variant="Narrow" class="cardSpinner">
+                <div if:true={showSpinner}>
+                    <lightning-spinner
+                        alternative-text="Loading..." variant="brand">
+                    </lightning-spinner>
+                </div>
                 <div class="slds-var-p-around_small">
                     <template if:true={data}>
                         <c-custom-dt-type-lwc
@@ -24,6 +32,5 @@
                         </c-custom-dt-type-lwc>
                     </template>
                 </div>
-        </div>
-    </lightning-card>
+            </lightning-card>
 </template>

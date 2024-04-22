@@ -7,7 +7,6 @@ import { refreshApex } from '@salesforce/apex';
 import { getPicklistValues, getObjectInfo } from 'lightning/uiObjectInfoApi';
 import POSITION_OBJECT from '@salesforce/schema/Position__c';
 import  PICKLIST_FIELD from '@salesforce/schema/Position__c.Status__c';
-import { RefreshEvent } from "lightning/refresh";
 
 const columns = [
     {label:'Position Title', fieldName:'Name', type:'text'},
@@ -25,8 +24,6 @@ const columns = [
     {label:'Max Pay', fieldName:'Max_Pay__c', type:'currency'}
 ];
 
-//selectedFilterOption: '$selectedFilterOption', pickList: '$pickListOptions'}
-
 export default class Positions extends LightningElement {
 
     columns = columns;
@@ -40,7 +37,6 @@ export default class Positions extends LightningElement {
     @wire(getObjectInfo, { objectApiName: POSITION_OBJECT })
     objectInfo;
  
-    //fetch picklist options
     @wire(getPicklistValues, {
         recordTypeId: "$objectInfo.data.defaultRecordTypeId",
         fieldApiName: PICKLIST_FIELD
@@ -54,7 +50,6 @@ export default class Positions extends LightningElement {
         }
     }
  
-    //here I pass picklist option so that this wire method call after above method
     @wire(getPositions, {selectedFilterOption: '$selectedFilterOption', pickList: '$pickListOptions'})
     positionData(result) {
         this.positionData = result;
@@ -82,17 +77,12 @@ export default class Positions extends LightningElement {
                 }
             }
         });
- 
-        //write changes back to original data
         this.data = [...copyData];
     }
  
     updateDraftValues(updateItem) {
         let draftValueChanged = false;
         let copyDraftValues = [...this.draftValues];
-        //store changed value to do operations
-        //on save. This will enable inline editing &
-        //show standard cancel & save button
         copyDraftValues.forEach(item => {
             if (item.Id === updateItem.Id) {
                 for (let field in updateItem) {
@@ -109,9 +99,7 @@ export default class Positions extends LightningElement {
         }
     }
  
-    //handler to handle cell changes & update values in draft values
     handleCellChange(event) {
-        //this.updateDraftValues(event.detail.draftValues[0]);
         let draftValues = event.detail.draftValues;
         draftValues.forEach(ele=>{
             this.updateDraftValues(ele);
@@ -127,7 +115,6 @@ export default class Positions extends LightningElement {
             return { fields };
         });
  
-        // Updateing the records using the UiRecordAPi
         const promises = recordInputs.map(recordInput => updateRecord(recordInput));
         Promise.all(promises).then(res => {
             this.showToast('Success', 'Records Updated Successfully!', 'success', 'dismissable');
@@ -143,7 +130,6 @@ export default class Positions extends LightningElement {
     }
  
     handleCancel(event) {
-        //remove draftValues & revert data changes
         this.data = JSON.parse(JSON.stringify(this.lastSavedData));
         this.draftValues = [];
     }
@@ -158,7 +144,6 @@ export default class Positions extends LightningElement {
         this.dispatchEvent(evt);
     }
  
-    // This function is used to refresh the table once data updated
     async refresh() {
         await refreshApex(this.positionData);
     }
