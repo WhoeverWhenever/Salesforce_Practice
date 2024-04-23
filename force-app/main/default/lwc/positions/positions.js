@@ -33,6 +33,8 @@ export default class Positions extends LightningElement {
     @track positionData;
     @track draftValues = [];
     @track pickListOptions;
+    @track visibleData = [];
+    @api recordsPerPage = 5;
  
     @wire(getObjectInfo, { objectApiName: POSITION_OBJECT })
     objectInfo;
@@ -162,5 +164,16 @@ export default class Positions extends LightningElement {
     handleFilterChange(event){
         this.selectedFilterOption = event.detail.value;
         refreshApex(this.positionData);
+    }
+
+    handleDisplayData(event){
+        console.log('Event');
+        console.log(JSON.stringify(event.detail.records));
+        if(event.detail.records){
+            this.visibleData = [...event.detail.records];
+        }
+        else{
+            this.visibleData = this.data;
+        }
     }
 }

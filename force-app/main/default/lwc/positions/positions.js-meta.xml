@@ -8,7 +8,8 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__AppPage">
-        <property name="selectedFilterOption" type="String" default="None" label="Select the Filter Option" datasource="None,Open,Closed,Open Hot,Closed Cancelled"/>
+            <property name="selectedFilterOption" type="String" default="None" label="Select the Filter Option" datasource="None,Open,Closed,Open Hot,Closed Cancelled"/>
+            <property name="recordsPerPage" type="Integer" default="5" label="Select the number of records per page"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

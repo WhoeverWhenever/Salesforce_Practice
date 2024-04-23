@@ -21,7 +21,7 @@
                     <template if:true={data}>
                         <c-custom-dt-type-lwc
                             key-field="Id"
-                            data={data} 
+                            data={visibleData} 
                             columns={columns} 
                             onvalueselect={handleSelection}
                             draft-values={draftValues} 
@@ -33,4 +33,10 @@
                     </template>
                 </div>
             </lightning-card>
+        <lightning-card>
+                <c-pagination
+                current-page-data={data}
+                onpaginate={handleDisplayData}
+                perpage={recordsPerPage}></c-pagination>
+        </lightning-card>
 </template>
