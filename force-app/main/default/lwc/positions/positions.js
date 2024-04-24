@@ -1,5 +1,7 @@
 import { LightningElement, track, wire } from 'lwc';
 import getPositions from '@salesforce/apex/PositionControllerLWC.getPositions';
+import { MessageContext, publish } from 'lightning/messageService';
+import PaginationChannel from '@salesforce/messageChannel/paginationChannel__c';
 
 import { updateRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -48,6 +50,9 @@ export default class Positions extends LightningElement {
             console.log(error);
         }
     }
+
+    @wire(MessageContext)
+    messageContext;
  
     @wire(getPositions, {selectedFilterOption: '$selectedFilterOption', pickList: '$pickListOptions'})
     positionData(result) {
@@ -60,6 +65,11 @@ export default class Positions extends LightningElement {
             })
  
             this.lastSavedData = JSON.parse(JSON.stringify(this.data));
+            const message = {
+                action: "sendNumberOfRecords",
+                actionData: {totalRecords: this.data.length}
+            }
+            publish(this.messageContext, PaginationChannel, message);
  
         } else if (result.error) {
             this.data = undefined;
