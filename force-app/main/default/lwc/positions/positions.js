@@ -41,7 +41,6 @@ export default class Positions extends LightningElement {
         recordTypeId: "$objectInfo.data.defaultRecordTypeId",
         fieldApiName: PICKLIST_FIELD
     })
- 
     wirePickList({ error, data }) {
         if (data) {
             this.pickListOptions = data.values;
@@ -112,6 +111,7 @@ export default class Positions extends LightningElement {
  
         const recordInputs = this.saveDraftValues.slice().map(draft => {
             const fields = Object.assign({}, draft);
+
             return { fields };
         });
  
@@ -119,6 +119,7 @@ export default class Positions extends LightningElement {
         Promise.all(promises).then(res => {
             this.showToast('Success', 'Records Updated Successfully!', 'success', 'dismissable');
             this.draftValues = [];
+
             return this.refresh();
         }).catch(error => {
             console.log(error);
@@ -161,5 +162,4 @@ export default class Positions extends LightningElement {
         this.selectedFilterOption = event.detail.value;
         refreshApex(this.positionData);
     }
-
 }

@@ -73,4 +73,3 @@ private with sharing class RecruitingAppUtilitiesTest {
         Assert.areEqual(5, result[2].size(), 'Expected 5 records of Reviews');
     }
 }
-
