@@ -3,6 +3,7 @@ import { LightningElement, track, api } from 'lwc';
 export default class Pagination extends LightningElement {
     tableData=[];
     @track page = 1;
+    numberOfPages = 0;
     @api perpage = 5;
     @track pages = [];
     set_size = 5;
@@ -48,9 +49,9 @@ export default class Pagination extends LightningElement {
      }
 
     setPages = (data)=>{
-        let numberOfPages = Math.ceil(data.length / this.perpage);
+        this.numberOfPages = Math.ceil(data.length / this.perpage);
         this.pages = [];
-        for (let index = 1; index <= numberOfPages; index++) {
+        for (let index = 1; index <= this.numberOfPages; index++) {
             this.pages.push(index);
         }
      }  
