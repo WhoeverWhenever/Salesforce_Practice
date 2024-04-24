@@ -1,0 +1,15 @@
+<template>
+    <lightning-card title="Accounts">
+        <lightning-datatable
+        key-field="id"
+        data={visibleData}
+        columns={columns}
+        ></lightning-datatable>
+    </lightning-card>
+    <lightning-card>
+        <c-pagination
+        current-page-data={accountData}
+        onpaginate={handleDisplayData}
+        perpage={recordsPerPage}></c-pagination>
+    </lightning-card>
+</template>

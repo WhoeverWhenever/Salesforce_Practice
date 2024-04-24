@@ -1,6 +1,7 @@
 import { LightningElement, track, api } from 'lwc';
 
 export default class Pagination extends LightningElement {
+    
     tableData=[];
     @track page = 1;
     numberOfPages = 0;
@@ -29,6 +30,7 @@ export default class Pagination extends LightningElement {
         if(this.page > mid){
             return this.pages.slice(this.page-mid, this.page+mid-1);
         } 
+
         return this.pages.slice(0,this.set_size);
      }
 
@@ -45,6 +47,7 @@ export default class Pagination extends LightningElement {
         let perpage = this.perpage;
         let startIndex = (page*perpage) - perpage;
         let endIndex = (page*perpage);
+
         return this.tableData.slice(startIndex,endIndex);
      }
 
@@ -66,17 +69,14 @@ export default class Pagination extends LightningElement {
 
     onNext = ()=>{
         ++this.page;
-        console.log(JSON.stringify(this.currentPageData));
     }
 
     onPrev = ()=>{
         --this.page;
-        console.log(JSON.stringify(this.currentPageData));
     }
 
     onPageClick = (e)=>{
         this.page = parseInt(e.target.dataset.id,10);
-        console.log(JSON.stringify(this.currentPageData));
     }
 
     get currentPageData(){
@@ -90,5 +90,4 @@ export default class Pagination extends LightningElement {
             }
         }));
     }
-
 }

@@ -43,7 +43,6 @@ export default class Positions extends LightningElement {
         recordTypeId: "$objectInfo.data.defaultRecordTypeId",
         fieldApiName: PICKLIST_FIELD
     })
- 
     wirePickList({ error, data }) {
         if (data) {
             this.pickListOptions = data.values;
@@ -79,12 +78,14 @@ export default class Positions extends LightningElement {
                 }
             }
         });
+
         this.data = [...copyData];
     }
  
     updateDraftValues(updateItem) {
         let draftValueChanged = false;
         let copyDraftValues = [...this.draftValues];
+
         copyDraftValues.forEach(item => {
             if (item.Id === updateItem.Id) {
                 for (let field in updateItem) {
@@ -103,6 +104,7 @@ export default class Positions extends LightningElement {
  
     handleCellChange(event) {
         let draftValues = event.detail.draftValues;
+        
         draftValues.forEach(ele=>{
             this.updateDraftValues(ele);
         })
@@ -152,7 +154,7 @@ export default class Positions extends LightningElement {
         await refreshApex(this.positionData);
     }
 
-    @api selectedFilterOption = 'None';
+    @track selectedFilterOption = 'None';
     @track filterOptions = [
         {label:'None', value:'None'},
         {label:'Open', value:'Open'},
@@ -168,7 +170,6 @@ export default class Positions extends LightningElement {
     }
 
     handleDisplayData(event){
-        console.log(JSON.stringify(event.detail.records));
         if(event.detail.records){
             this.visibleData = [...event.detail.records];
         }
