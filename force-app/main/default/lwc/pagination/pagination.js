@@ -6,16 +6,23 @@ export default class Pagination extends LightningElement {
     @api perpage = 5;
     @track pages = [];
     set_size = 5;
+
+    @api
+    setFirstPage(){
+        this.page = 1;
+    }
     
     renderedCallback(){
       this.renderButtons();
       this.handlePagination();   
     }
+
     renderButtons = ()=>{
         this.template.querySelectorAll('button').forEach((but)=>{
             but.style.backgroundColor = this.page===parseInt(but.dataset.id,10)?'yellow':'white';
          });
     }
+    
     get pagesList(){
         let mid = Math.floor(this.set_size/2) + 1 ;
         if(this.page > mid){

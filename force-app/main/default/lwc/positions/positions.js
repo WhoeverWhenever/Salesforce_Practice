@@ -163,11 +163,11 @@ export default class Positions extends LightningElement {
 
     handleFilterChange(event){
         this.selectedFilterOption = event.detail.value;
+        this.handleFirstPage();
         refreshApex(this.positionData);
     }
 
     handleDisplayData(event){
-        console.log('Event');
         console.log(JSON.stringify(event.detail.records));
         if(event.detail.records){
             this.visibleData = [...event.detail.records];
@@ -175,5 +175,9 @@ export default class Positions extends LightningElement {
         else{
             this.visibleData = this.data;
         }
+    }
+
+    handleFirstPage(){
+        this.template.querySelector("c-pagination").setFirstPage();
     }
 }
