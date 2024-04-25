@@ -96,7 +96,8 @@ export default class Positions extends LightningElement {
             this.lastSavedData = JSON.parse(JSON.stringify(this.data));
             this.sendNumberOfRecords();
  
-        } else if (result.error) {
+        } 
+        else if (result.error) {
             this.data = undefined;
         }
     };
@@ -220,8 +221,4 @@ export default class Positions extends LightningElement {
         let endIndex = this.recordsPerPage*this.currentPage;
         this.visibleData = this.data.slice(startIndex,endIndex);
      }
-
-    // get currentPageData(){
-    //     return this.pageData();
-    // }
 }
