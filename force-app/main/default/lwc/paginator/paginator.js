@@ -1,13 +1,9 @@
 import { LightningElement, track, api, wire } from 'lwc';
-import { MessageContext, subscribe } from 'lightning/messageService';
+import { MessageContext, subscribe, publish } from 'lightning/messageService';
 import PaginationChannel from '@salesforce/messageChannel/paginationChannel__c';
 
 export default class Paginator extends LightningElement {
-    // tableData=[
-    //     {Name: 'Data1'},{Name: 'Data2'},{Name: 'Data3'},{Name: 'Data4'},{Name: 'Data5'},{Name: 'Data6'},
-    //     {Name: 'Data7'},{Name: 'Data8'},{Name: 'Data9'},{Name: 'Data10'},{Name: 'Data11'},{Name: 'Data12'},
-    //     {Name: 'Data13'},{Name: 'Data14'},{Name: 'Data15'},{Name: 'Data16'}
-    // ];
+
     @track page = 1;
     totalRecords = 0;
     numberOfPages = 0;
@@ -19,7 +15,6 @@ export default class Paginator extends LightningElement {
     messageContext;
 
     connectedCallback() {
-        console.log("Connected callback");
         this.handleSubscribe();
     }
  
@@ -33,16 +28,33 @@ export default class Paginator extends LightningElement {
     }
 
     handlePaginationMessage(message){
-        if (message.action != 'sendNumberOfRecords') {
-            return;
+        switch (message.action) {
+            case 'sendNumberOfRecords':
+                this.totalRecords = message.actionData.totalRecords;
+                this.setPages();
+                this.sendRecordsPerPage();
+                break;
+            case 'sendFilterSelected':
+                this.page = 1;
+                this.sendCurrentPage();
+                break;
         }
-        this.totalRecords = message.actionData.totalRecords;
-        console.log("Total records assigned " + this.totalRecords);
-        this.setPages();
     }
 
-    setFirstPage(){
-        this.page = 1;
+    sendRecordsPerPage(){
+        const message = {
+            action: "sendRecordsPerPage",
+            actionData: {recordsPerPage: this.perpage}
+        }
+        publish(this.messageContext, PaginationChannel, message);
+    }
+
+    sendCurrentPage(){
+        const message = {
+            action: "sendCurrentPage",
+            actionData: {currentPage: this.page}
+        }
+        publish(this.messageContext, PaginationChannel, message);
     }
     
     renderedCallback(){
@@ -63,19 +75,8 @@ export default class Paginator extends LightningElement {
 
         return this.pages.slice(0,this.set_size);
      }
-    
-    pageData = ()=>{
-        let page = this.page;
-        let perpage = this.perpage;
-        let startIndex = (page*perpage) - perpage;
-        let endIndex = (page*perpage);
-
-        return this.tableData.slice(startIndex,endIndex);
-     }
 
     setPages = ()=>{
-        console.log("Total records");
-        console.log(this.totalRecords);
         this.numberOfPages = Math.ceil(this.totalRecords/this.perpage);
         this.pages = [];
         for (let index = 1; index <= this.numberOfPages; index++) {
@@ -93,17 +94,16 @@ export default class Paginator extends LightningElement {
 
     onNext = ()=>{
         ++this.page;
+        this.sendCurrentPage();
     }
 
     onPrev = ()=>{
         --this.page;
+        this.sendCurrentPage();
     }
 
     onPageClick = (e)=>{
         this.page = parseInt(e.target.dataset.id,10);
-    }
-
-    get currentPageData(){
-        return this.pageData();
+        this.sendCurrentPage();
     }
 }
