@@ -1,5 +1,7 @@
 import { LightningElement, track, wire } from 'lwc';
 import getPositions from '@salesforce/apex/PositionControllerLWC.getPositions';
+import { MessageContext, publish, subscribe } from 'lightning/messageService';
+import PaginationChannel from '@salesforce/messageChannel/paginationChannel__c';
 
 import { updateRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -33,6 +35,9 @@ export default class Positions extends LightningElement {
     @track draftValues = [];
     lastSavedData = [];
     @track pickListOptions;
+    recordsPerPage;
+    currentPage = 1;
+    visibleData = [];
  
     @wire(getObjectInfo, { objectApiName: POSITION_OBJECT })
     objectInfo;
@@ -41,12 +46,40 @@ export default class Positions extends LightningElement {
         recordTypeId: "$objectInfo.data.defaultRecordTypeId",
         fieldApiName: PICKLIST_FIELD
     })
- 
     wirePickList({ error, data }) {
         if (data) {
             this.pickListOptions = data.values;
         } else if (error) {
             console.log(error);
+        }
+    }
+
+    @wire(MessageContext)
+    messageContext;
+
+    connectedCallback() {
+        this.handleSubscribe();
+    }
+ 
+    handleSubscribe() {
+        if (this.subscription) {
+            return;
+        }
+        this.subscription = subscribe(this.messageContext, PaginationChannel, (message) => {
+            this.handlePaginationMessage(message);           
+        });
+    }
+
+    handlePaginationMessage(message){
+        switch (message.action) {
+            case 'sendRecordsPerPage':
+                this.recordsPerPage = message.actionData.recordsPerPage;
+                this.pageData();
+                break;
+            case 'sendCurrentPage':
+                this.currentPage = message.actionData.currentPage;
+                this.pageData();
+                break;
         }
     }
  
@@ -61,11 +94,21 @@ export default class Positions extends LightningElement {
             })
  
             this.lastSavedData = JSON.parse(JSON.stringify(this.data));
+            this.sendNumberOfRecords();
  
-        } else if (result.error) {
+        } 
+        else if (result.error) {
             this.data = undefined;
         }
     };
+
+    sendNumberOfRecords(){
+        const message = {
+            action: "sendNumberOfRecords",
+            actionData: {totalRecords: this.data.length}
+        }
+        publish(this.messageContext, PaginationChannel, message);
+    }
  
     updateDataValues(updateItem) {
         let copyData = JSON.parse(JSON.stringify(this.data));
@@ -112,6 +155,7 @@ export default class Positions extends LightningElement {
  
         const recordInputs = this.saveDraftValues.slice().map(draft => {
             const fields = Object.assign({}, draft);
+
             return { fields };
         });
  
@@ -119,6 +163,7 @@ export default class Positions extends LightningElement {
         Promise.all(promises).then(res => {
             this.showToast('Success', 'Records Updated Successfully!', 'success', 'dismissable');
             this.draftValues = [];
+
             return this.refresh();
         }).catch(error => {
             console.log(error);
@@ -159,7 +204,21 @@ export default class Positions extends LightningElement {
 
     handleFilterChange(event){
         this.selectedFilterOption = event.detail.value;
+        this.sendFilterSelected();
+        this.pageData();
         refreshApex(this.positionData);
     }
 
+    sendFilterSelected(){
+        const message = {
+            action: "sendFilterSelected"
+        }
+        publish(this.messageContext, PaginationChannel, message);
+    }
+
+    pageData = ()=>{
+        let startIndex = this.recordsPerPage*(this.currentPage-1);
+        let endIndex = this.recordsPerPage*this.currentPage;
+        this.visibleData = this.data.slice(startIndex,endIndex);
+     }
 }

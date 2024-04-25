@@ -21,7 +21,7 @@
                     <template if:true={data}>
                         <c-custom-dt-type-lwc
                             key-field="Id"
-                            data={data} 
+                            data={visibleData} 
                             columns={columns} 
                             onvalueselect={handleSelection}
                             draft-values={draftValues} 

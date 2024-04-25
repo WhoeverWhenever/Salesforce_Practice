@@ -1,0 +1,29 @@
+<template>
+    <div class = "container">
+      <lightning-card>
+        <div class="slds-align_absolute-center">
+          <ul class="slds-button-group-row">
+            <template if:true={hasPrev}>
+              <li class="slds-button-group-item"> 
+                <button class="slds-button slds-button_neutral" onclick ={onPrev}> prev
+                </button>
+              </li>
+            </template>
+            <template for:each={pagesList} for:item= "pageNumber">
+              <li class="slds-button-group-item"  key={pageNumber}> 
+                <button data-id={pageNumber}  class="slds-button slds-button_neutral" 
+                        onclick={onPageClick}>{pageNumber}</button>
+              </li>
+            </template>
+            <template if:true={hasNext}>
+              <li class="slds-button-group-item" > 
+                <button class="slds-button slds-button_neutral"  onclick={onNext}>next</button>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <p class="slds-text-align_center" style="margin-top:5px">{page}/{numberOfPages}</p>
+      </lightning-card>
+    </div>
+  </template>
+  

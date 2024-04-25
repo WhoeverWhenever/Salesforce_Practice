@@ -26,6 +26,7 @@ public with sharing class PositionControllerTestFactory {
         testPositions.add(new Position__c(Name = 'Test Position 8', Status__c = 'Closed Cancelled',
                                           Description__c = 'Some Description', Skills__c = 'JS',
                                           Location__c = 'Filler'));
+        
         return testPositions;
     }
 }

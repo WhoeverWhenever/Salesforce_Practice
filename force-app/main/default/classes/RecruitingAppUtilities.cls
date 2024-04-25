@@ -6,6 +6,7 @@ public with sharing class RecruitingAppUtilities {
                                             FROM Job_Application__c 
                                             WHERE CreatedDate >= :Date.today().addDays(-withinNumOfDays)
                                             AND Candidate__r.Owner.Profile.Name = 'Recruiter'];
+
         return jobApplications;
     }
 
@@ -14,6 +15,7 @@ public with sharing class RecruitingAppUtilities {
                                     Position__c(Name WHERE CreatedDate <= :Date.today().addDays(-createdDaysAgo)), 
                                     Candidate__c(Name WHERE CreatedDate <= :Date.today().addDays(-createdDaysAgo)), 
                                     Review__c(Name WHERE CreatedDate <= :Date.today().addDays(-createdDaysAgo))];
+
         return soslResult;
     }
 }

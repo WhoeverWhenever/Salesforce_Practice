@@ -17,23 +17,27 @@ public with sharing class TestFactory {
     public static Candidate__c getCandidate(String name) {
         Candidate__c testCandidate = new Candidate__c(Name = name, Location__c = 'Filler', 
                                                 Email__c = name + '@example.com', Phone__c = '+380337651100');
+
         return testCandidate;
     }
 
     public static Position__c getPosition(String name) {
         Position__c testPosition = new Position__c(Name = name, Location__c = 'Position Filler', 
                                                 Status__c = 'Open', Skills__c = 'JS', Description__c = 'Test Description');
+
         return testPosition;
     }
 
     public static Job_Application__c getJobApplication(Id candidate, Id position) {
         Job_Application__c testJA = new Job_Application__c(Candidate__c = candidate, Position__c = position, 
                                                             Status__c = 'Received');
+
         return testJA;
     }
 
     public static Review__c getReview(Id ja) {
         Review__c testReview = new Review__c (Job_Application__c = ja, Status__c = 'In progress');
+
         return testReview;
     }
 
@@ -42,6 +46,7 @@ public with sharing class TestFactory {
         for (Integer i = 0; i < amount; i++){
             candidates.add(getCandidate('TestName'+i));
         }
+
         return candidates;
     }
 
@@ -50,6 +55,7 @@ public with sharing class TestFactory {
         for (Integer i = 0; i < amount; i++){
             positions.add(getPosition('Position Title'+i));
         }
+        
         return positions;
     }
 

@@ -11,6 +11,4 @@ export default class CustomDtTypeLwc extends LightningDatatable {
             typeAttributes : ['label', 'placeholder', 'options', 'value', 'context', 'variant','name']
         }
     };
-   
-   
 }
