@@ -23,6 +23,13 @@ private with sharing class PositionControllerLWCTest {
         renderedPositions = PositionControllerLWC.getPositions('Closed Cancelled');
         System.assertEquals(2, renderedPositions.size());
 
+        User stdEmployee = TestFactory.getUser('employeeUser', 'Standard Employee');
+        System.runAs(stdEmployee){
+            List<Position__c> newRenderedPositions = PositionControllerLWC.getPositions('None');
+            System.assertEquals(null, newRenderedPositions[0].Min_Pay__c);
+            System.assertEquals(null, newRenderedPositions[0].Max_Pay__c);
+        }
+
         try {
             renderedPositions = PositionControllerLWC.getPositions(null);
             Assert.fail('An exception should have been thrown');

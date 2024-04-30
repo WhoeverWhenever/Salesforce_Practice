@@ -11,7 +11,7 @@
             </lightning-combobox>
         </div>
     </lightning-card>
-    <lightning-card  variant="Narrow" class="cardSpinner">
+    <lightning-card  variant="Narrow" class="card-spinner">
                 <div if:true={showSpinner}>
                     <lightning-spinner
                         alternative-text="Loading..." variant="brand">
@@ -33,4 +33,12 @@
                     </template>
                 </div>
             </lightning-card>
+            <template lwc:if={errorMessages.length}>
+                <div class="error-message">
+                    <p class="error-title">Errors occured:</p>
+                    <template for:each={errorMessages} for:item="em" for:index="index">
+                        <p class="error-text" key={em}>{em}</p>
+                    </template>
+                </div>
+            </template>
 </template>

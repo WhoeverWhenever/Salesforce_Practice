@@ -38,6 +38,7 @@ export default class Positions extends LightningElement {
     recordsPerPage;
     currentPage = 1;
     visibleData = [];
+    @track errorMessages = [];
  
     @wire(getObjectInfo, { objectApiName: POSITION_OBJECT })
     objectInfo;
@@ -49,8 +50,9 @@ export default class Positions extends LightningElement {
     wirePickList({ error, data }) {
         if (data) {
             this.pickListOptions = data.values;
-        } else if (error) {
-            console.log(error);
+        } 
+        else if (error) {
+            this.errorMessages.push(error.body.message);
         }
     }
 
@@ -99,6 +101,7 @@ export default class Positions extends LightningElement {
         } 
         else if (result.error) {
             this.data = undefined;
+            this.errorMessages.push(result.error.body.message);
         }
     };
 
@@ -167,7 +170,7 @@ export default class Positions extends LightningElement {
             return this.refresh();
         }).catch(error => {
             console.log(error);
-            this.showToast('Error', 'An Error Occured!!', 'error', 'dismissable');
+            this.showToast('Error', 'An Error Occured!', 'error', 'dismissable');
         }).finally(() => {
             this.draftValues = [];
             this.showSpinner = false;
