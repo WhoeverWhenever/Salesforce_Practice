@@ -21,4 +21,5 @@
             </apex:pageBlockButtons>
      </apex:pageBlock>
     </apex:form>
+    <apex:pageMessages></apex:pageMessages>
 </apex:page>
