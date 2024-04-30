@@ -21,12 +21,21 @@ private with sharing class RecruitingAppUtilitiesTest {
         }
         update updatedJobApplications;
 
-
         Test.startTest();
         List<Job_Application__c> testJobApplications = RecruitingAppUtilities.getRecentRecruiterJobApplications(7);
-        Test.stopTest();
-
         Assert.areEqual(3, testJobApplications.size(), 'Expected 3 records');
+
+        try {
+            List<Job_Application__c> testNegativeJobApplications = RecruitingAppUtilities.getRecentRecruiterJobApplications(-2);
+            Assert.fail('An exception should have been thrown');
+        } 
+        catch (RecruitingAppUtilitiesException e) {
+            Assert.isTrue(
+              e.getMessage().equalsIgnoreCase('Invalid time period!'),
+              'Exception message does not match: ' + e.getMessage()
+            );
+        }
+        Test.stopTest();
     }
 
     @isTest
@@ -64,12 +73,33 @@ private with sharing class RecruitingAppUtilitiesTest {
 
         Test.startTest();
         List<List<SObject>> result = RecruitingAppUtilities.findWord('develop', 7);
-        Test.stopTest();
-
 
         Assert.areEqual(3, result.size(), 'Expected 3 lists');
         Assert.areEqual(3, result[0].size(), 'Expected 3 records of Position');
         Assert.areEqual(1, result[1].size(), 'Expected 1 record of Candidate');
         Assert.areEqual(5, result[2].size(), 'Expected 5 records of Reviews');
+
+        try {
+            List<List<SObject>> negativeResult1 = RecruitingAppUtilities.findWord('devel0p', 7);
+            Assert.fail('An exception should have been thrown');
+        } 
+        catch (RecruitingAppUtilitiesException e) {
+            Assert.isTrue(
+              e.getMessage().equalsIgnoreCase('Invalid input parameters!'),
+              'Exception message does not match: ' + e.getMessage()
+            );
+        }
+
+        try {
+            List<List<SObject>> negativeResult2 = RecruitingAppUtilities.findWord('develop', 0);
+            Assert.fail('An exception should have been thrown');
+        } 
+        catch (RecruitingAppUtilitiesException e) {
+            Assert.isTrue(
+              e.getMessage().equalsIgnoreCase('Invalid input parameters!'),
+              'Exception message does not match: ' + e.getMessage()
+            );
+        }
+        Test.stopTest();
     }
 }
