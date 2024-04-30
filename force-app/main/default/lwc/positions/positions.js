@@ -2,6 +2,7 @@ import { LightningElement, track, wire } from 'lwc';
 import getPositions from '@salesforce/apex/PositionControllerLWC.getPositions';
 import { MessageContext, publish, subscribe } from 'lightning/messageService';
 import PaginationChannel from '@salesforce/messageChannel/paginationChannel__c';
+import Error_Message from '@salesforce/label/c.Error_Message';
 
 import { updateRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -170,7 +171,7 @@ export default class Positions extends LightningElement {
             return this.refresh();
         }).catch(error => {
             console.log(error);
-            this.showToast('Error', 'An Error Occured!', 'error', 'dismissable');
+            this.showToast('Error', Error_Message, 'error', 'dismissable');
         }).finally(() => {
             this.draftValues = [];
             this.showSpinner = false;
