@@ -2,7 +2,10 @@ import { LightningElement, track, wire } from 'lwc';
 import getPositions from '@salesforce/apex/PositionControllerLWC.getPositions';
 import { MessageContext, publish, subscribe } from 'lightning/messageService';
 import PaginationChannel from '@salesforce/messageChannel/paginationChannel__c';
-import Error_Message from '@salesforce/label/c.Error_Message';
+import errorMessageLabel from '@salesforce/label/c.Error_Message';
+import toastErrorTitleLabel from '@salesforce/label/c.Toast_Error_Title';
+import updatedMessageLabel from '@salesforce/label/c.Successfully_Updated';
+import toastSuccessTitleLabel from '@salesforce/label/c.Toast_Success_Title';
 
 import { updateRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -165,13 +168,13 @@ export default class Positions extends LightningElement {
  
         const promises = recordInputs.map(recordInput => updateRecord(recordInput));
         Promise.all(promises).then(res => {
-            this.showToast('Success', 'Records Updated Successfully!', 'success', 'dismissable');
+            this.showToast(toastSuccessTitleLabel, updatedMessageLabel, 'success', 'dismissable');
             this.draftValues = [];
 
             return this.refresh();
         }).catch(error => {
             console.log(error);
-            this.showToast('Error', Error_Message, 'error', 'dismissable');
+            this.showToast(toastErrorTitleLabel, errorMessageLabel, 'error', 'dismissable');
         }).finally(() => {
             this.draftValues = [];
             this.showSpinner = false;
