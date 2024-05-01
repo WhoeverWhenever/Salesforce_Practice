@@ -3,13 +3,26 @@ public with sharing class PositionControllerLWC {
     
     @AuraEnabled (cacheable=true)
     public static List<Position__c> getPositions(String selectedFilterOption){
+        SObjectAccessDecision strippedPositionRecords;
         try {
-            String positionQuery = 'SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c';
             if(selectedFilterOption.equals('None') || String.isBlank(selectedFilterOption)){
-                positions = Database.query(positionQuery);
+                strippedPositionRecords = Security.stripInaccessible(AccessType.READABLE, 
+                                                                    [SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c]);
             }
             else if (selectedFilterOption.length() > 0){
-                positions = Database.query(positionQuery + ' WHERE Status__c = :selectedFilterOption');
+                strippedPositionRecords = Security.stripInaccessible(AccessType.READABLE, 
+                                                                    [SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c WHERE Status__c = :selectedFilterOption]);
+            }
+
+            positions = strippedPositionRecords.getRecords();
+            List<String> removedFields = new List<String>(strippedPositionRecords.getRemovedFields().get('Position__c'));
+            
+            if(removedFields.size() > 0){
+                for(Position__c p : positions){
+                    for(String field : removedFields){
+                        p.put(field, null);
+                    }
+                }
             }
 
             return positions;

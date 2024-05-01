@@ -7,29 +7,70 @@ public with sharing class PositionController {
     public List<SelectOption> getFilterOptions(){
         filterOptions = new List<SelectOption>();
         List<String> pickListValuesList= new List<String>();
-		Schema.DescribeFieldResult fieldResult = Position__c.Status__c.getDescribe();
-		List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-        filterOptions.add(new SelectOption('None', 'None'));
-		for( Schema.PicklistEntry pickListVal : ple){
-            filterOptions.add(new SelectOption(pickListVal.getLabel(), pickListVal.getLabel()));
-		}   
-          
+        try{
+            if(Schema.SObjectType.Position__c.fields.Status__c.isAccessible()){
+                Schema.DescribeFieldResult fieldResult = Position__c.Status__c.getDescribe();
+                List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+
+                filterOptions.add(new SelectOption('None', 'None'));
+                for( Schema.PicklistEntry pickListVal : ple){
+                    filterOptions.add(new SelectOption(pickListVal.getLabel(), pickListVal.getLabel()));
+                }
+            }
+        }
+        catch(Exception e){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.ERROR, e.getMessage()));
+        }
+        
         return filterOptions;
     }
 
     public List<Position__c> getPositions() {
-        String positionQuery = 'SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c';
-        if(selectedFilterOption.equals('None') || String.isBlank(selectedFilterOption)){
-            positions = Database.query(positionQuery);
+        try{
+            List<SelectOption> listOfOptions = getFilterOptions();
+            List<String> filterOptionValues = new List<String>();
+            SObjectAccessDecision strippedPositionRecords;
+
+            for (SelectOption option : listOfOptions) {
+                if(option.getValue() != 'None'){
+                    filterOptionValues.add(option.getValue());
+                }
+            }
+
+            if(selectedFilterOption.equals('None') || String.isBlank(selectedFilterOption)){
+                strippedPositionRecords = Security.stripInaccessible(AccessType.READABLE, 
+                                                                    [SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c]);
+            }
+            else if (filterOptionValues.contains(selectedFilterOption)){
+                strippedPositionRecords = Security.stripInaccessible(AccessType.READABLE, 
+                                                                    [SELECT Name, Status__c, Opened_Date__c, Closed_Date__c, Min_Pay__c, Max_Pay__c FROM Position__c WHERE Status__c = :selectedFilterOption]);
+            }
+
+            positions = strippedPositionRecords.getRecords();
+            List<String> removedFields = new List<String>(strippedPositionRecords.getRemovedFields().get('Position__c'));
+            if(removedFields.size() > 0){
+                for(Position__c p : positions){
+                    for(String field : removedFields){
+                        p.put(field, null);
+                    }
+                }
+            }
         }
-        else if (selectedFilterOption.length() > 0){
-            positions = Database.query(positionQuery + ' WHERE Status__c = :selectedFilterOption');
+        catch(Exception e){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.ERROR, e.getMessage()));
         }
 
         return positions;
     }
 
     public void save(){
-        update positions;
+        try {
+            if (Schema.SObjectType.Position__c.isUpdateable()){
+                update positions;
+            }
+        }
+        catch(DmlException e){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.ERROR, 'DML error occured: ' + e.getMessage()));
+        }
     }
 }

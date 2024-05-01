@@ -1,3 +1,16 @@
-.cardSpinner{
+.card-spinner{
     position: relative;
+}
+
+.error-message{
+    margin-top: 10px;
+    padding: 15px;
+    color: red;
+    font-weight: 700;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.error-title{
+    font-size: 24px;
 }
