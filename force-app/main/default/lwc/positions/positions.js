@@ -103,6 +103,8 @@ export default class Positions extends LightningElement {
             this.data.forEach(ele => {
                 ele.pickListOptions = this.pickListOptions;
             })
+
+            this.columns = this.filterColumns(this.data, columns);
  
             this.lastSavedData = JSON.parse(JSON.stringify(this.data));
             this.sendNumberOfRecords();
@@ -232,5 +234,20 @@ export default class Positions extends LightningElement {
         let startIndex = this.recordsPerPage*(this.currentPage-1);
         let endIndex = this.recordsPerPage*this.currentPage;
         this.visibleData = this.data.slice(startIndex,endIndex);
+     }
+
+     filterColumns(records, columns){
+        const maxFields = Math.max(...records.map(m => Object.keys(m).length));
+        const objectWithMaxFields = records.find(f => Object.keys(f).length === maxFields);
+        const objectKeys = Object.keys(objectWithMaxFields);
+
+        const fieldNames = [];
+        columns.forEach((column) => {
+            fieldNames.push(column['fieldName'])
+    
+        });
+
+        return columns.filter(column => objectKeys.includes(column['fieldName']));
+
      }
 }
