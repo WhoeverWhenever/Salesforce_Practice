@@ -15,7 +15,12 @@ export default class Paginator extends LightningElement {
     messageContext;
 
     connectedCallback() {
-        this.handleSubscribe();
+        try{
+            this.handleSubscribe();
+        }
+        catch(error){
+            console.log(error);
+        }
     }
  
     handleSubscribe() {
@@ -58,7 +63,12 @@ export default class Paginator extends LightningElement {
     }
     
     renderedCallback(){
-        this.renderButtons();
+        try{
+            this.renderButtons();
+        }
+        catch(error){
+            console.log(error);
+        }
     }
 
     renderButtons = ()=>{

@@ -31,6 +31,9 @@
                             hide-checkbox-column>
                         </c-custom-dt-type-lwc>
                     </template>
+                    <template if:false={data}>
+                        <p>No records are available</p>
+                    </template>
                 </div>
             </lightning-card>
             <template lwc:if={errorMessages.length}>

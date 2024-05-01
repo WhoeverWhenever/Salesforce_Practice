@@ -64,7 +64,12 @@ export default class Positions extends LightningElement {
     messageContext;
 
     connectedCallback() {
-        this.handleSubscribe();
+        try{
+            this.handleSubscribe();
+        }
+        catch(error){
+            console.log(error);
+        }
     }
  
     handleSubscribe() {
