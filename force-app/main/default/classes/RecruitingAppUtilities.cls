@@ -27,7 +27,5 @@ public with sharing class RecruitingAppUtilities {
         else{
             throw new RecruitingAppUtilitiesException('Invalid input parameters!');
         }
-
-        
     }
 }
