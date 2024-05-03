@@ -59,6 +59,15 @@ public with sharing class TestFactory {
         return positions;
     }
 
+    public static List<Job_Application__c> generateJobApplications(Integer amount, List<Candidate__c> candidates, List<Position__c> positions){
+        List<Job_Application__c> jobApplications = new List<Job_Application__c>();
+        for (Integer i = 0; i < amount; i++){
+            jobApplications.add(getJobApplication(candidates[i].Id, positions[i].Id));
+        }
+        
+        return jobApplications;
+    }
+
     public static void generateCandidatesWithApplicationsAndReviews(Integer amount){
         List<Candidate__c> candidates = generateCandidates(amount);
         List<Position__c> positions = generatePositions(amount);

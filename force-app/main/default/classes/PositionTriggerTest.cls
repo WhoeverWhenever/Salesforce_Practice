@@ -1,17 +1,10 @@
 @isTest
 private with sharing class PositionTriggerTest {
-
-    @testSetup static void setupTestPositions() {
-        List<Position__c> testPositions = new List<Position__c>();
-        for(Integer i = 0; i < 750; i++) {
-            testPositions.add(new Position__c(Name = 'TestPosition' + i, Status__c = 'Open', Location__c = 'Filler', Skills__c = 'Java', Description__c = 'Test Description ' + i));
-        }
-        insert testPositions;        
-    }
-
+    
     @isTest
     public static void testPositionTrigger() {
-        List<Position__c> testPositions = [SELECT Status__c FROM Position__c];
+        List<Position__c> testPositions = TestFactory.generatePositions(750);
+        insert testPositions;  
         List<Position__c> testPositionsToUpdate = new List<Position__c>();
 
         Test.startTest();
