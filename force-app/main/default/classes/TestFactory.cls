@@ -36,7 +36,7 @@ public with sharing class TestFactory {
     }
 
     public static Review__c getReview(Id ja) {
-        Review__c testReview = new Review__c (Job_Application__c = ja, Status__c = 'In progress');
+        Review__c testReview = new Review__c (Job_Application__c = ja, Status__c = 'In progress', Rating__c = 1);
 
         return testReview;
     }
@@ -57,6 +57,32 @@ public with sharing class TestFactory {
         }
         
         return positions;
+    }
+
+    public static List<Job_Application__c> generateJobApplications(Integer amount, List<Candidate__c> candidates, List<Position__c> positions){
+        List<Job_Application__c> jobApplications = new List<Job_Application__c>();
+        for (Integer i = 0; i < amount; i++){
+            jobApplications.add(getJobApplication(candidates[i].Id, positions[i].Id));
+        }
+        
+        return jobApplications;
+    }
+
+    public static List<Review__c> generateReviews(Integer perJobApplication, List<Job_Application__c> jobApplications){
+        List<Review__c> reviews = new List<Review__c>();
+        for(Integer i = 0; i < jobApplications.size(); i++){
+            for (Integer j = 0; j < perJobApplication; j++){
+                reviews.add(getReview(jobApplications[i].Id));
+                if(perJobApplication < 10){
+                    reviews[j+(i*perJobApplication)].Rating__c += (j+1)*7; 
+                }
+                else if (perJobApplication < 100){
+                    reviews[j+(i*perJobApplication)].Rating__c += j; 
+                }
+            }
+        }
+        
+        return reviews;
     }
 
     public static void generateCandidatesWithApplicationsAndReviews(Integer amount){
