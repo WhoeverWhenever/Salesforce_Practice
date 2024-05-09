@@ -1,5 +1,7 @@
 public with sharing class PositionControllerLWC {
     static List<Position__c> positions {get;set;}
+    static List<Job_Application__c> relatedJobApplications {get;set;}
+    static List<Candidate__c> relatedCandidates {get;set;}
     
     @AuraEnabled (cacheable=true)
     public static List<Position__c> getPositions(String selectedFilterOption){
@@ -26,6 +28,27 @@ public with sharing class PositionControllerLWC {
             }
 
             return positions;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled (cacheable=true)
+    public static List<Candidate__c> getRelatedCandidatesWithJAs(String positionId){
+        try {
+            List<Job_Application__c> relatedJAs = [SELECT Candidate__c FROM Job_Application__c WHERE Position__c = :positionId];
+            if (relatedJAs.size() > 0){
+                Set<Id> candidateIds = new Set<Id>();
+                for(Job_Application__c ja : relatedJAs){
+                    candidateIds.add(ja.Candidate__c);
+                }
+                relatedCandidates = [SELECT Name, Phone__c, Email__c, Location__c, Ready_to_Relocate__c, CV_Link__c,
+                                    (SELECT Name, Candidate__c, Status__c, Cover_Letter__c, Number_of_Reviews__c, Average_Rating__c 
+                                        FROM Job_Applications__r WHERE Position__c = :positionId)
+                                    FROM Candidate__c WHERE Id IN :candidateIds];
+            }
+
+            return relatedCandidates;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

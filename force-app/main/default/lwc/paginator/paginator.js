@@ -15,6 +15,7 @@ export default class Paginator extends LightningElement {
     messageContext;
 
     connectedCallback() {
+        console.log("Paginator");
         try{
             this.handleSubscribe();
         }
@@ -27,6 +28,7 @@ export default class Paginator extends LightningElement {
         if (this.subscription) {
             return;
         }
+        console.log("Subscribed");
         this.subscription = subscribe(this.messageContext, PaginationChannel, (message) => {
             this.handlePaginationMessage(message);           
         });
@@ -36,6 +38,7 @@ export default class Paginator extends LightningElement {
         switch (message.action) {
             case 'sendNumberOfRecords':
                 this.totalRecords = message.actionData.totalRecords;
+                console.log(this.totalRecords);
                 this.setPages();
                 this.sendRecordsPerPage();
                 break;

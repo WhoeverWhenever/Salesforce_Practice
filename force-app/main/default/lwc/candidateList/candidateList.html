@@ -1,0 +1,29 @@
+<template>
+	<lightning-card title="Candidates" icon-name="utility:people">
+		<div class="slds-card__body slds-card__body_inner">
+			<template if:true={dataList}>
+				<div class="slds-grid slds-wrap flex-gap">
+					<template for:each={visibleData} for:item="candidate">
+						<div key={candidate.Id} data-id={candidate.Id} class="slds-col custom-size slds-var-m-vertical_x-small slds-box" onclick={handleOpenClick}
+                        aria-haspopup="dialog">
+                            <span class="slds-avatar">
+                                <lightning-avatar src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/beautiful-mysterious-elf-woman-with-attitude-jim-brey.jpg" 
+                                                  class="slds-avatar_large"></lightning-avatar>
+                              </span>
+                            <b class="slds-var-p-horizontal_small slds-text-heading_small">{candidate.Name}</b>
+                            <div class="slds-var-p-top_small">
+                                <p><b>Phone:</b> {candidate.Phone__c}</p>
+                                <p><b>Email:</b> {candidate.Email__c}</p>
+                            </div>
+						</div>
+					</template>
+				</div>
+			</template>
+			<!-- <template if:true={candidate.error}>
+				<div class="slds-text-color_error">
+					An error occurred while loading the candidate list
+				</div>
+			</template> -->
+		</div>
+	</lightning-card>
+</template>

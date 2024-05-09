@@ -1,0 +1,19 @@
+<template>
+    <lightning-modal-header class="pointer" label={candidate.Name} onclick={navigateToRecordPage}></lightning-modal-header>
+    <lightning-modal-body>
+        <p><b>Phone:</b> {candidate.Phone__c}</p>
+        <p><b>Email:</b> {candidate.Email__c}</p>
+        <p><b>Location:</b> {candidate.Location__c}</p>
+        <p><b>CV Link:</b> {candidate.CV_Link__c}</p>
+        <p><b>Ready to Relocate:</b> {candidate.Ready_to_Relocate__c}</p>
+        <h2 class="slds-text-heading_medium slds-text-align_center">Job Application</h2>
+        <p><b>Status:</b> {jobApplication.Status__c}</p>
+        <p><b>Number of Reviews:</b> {jobApplication.Number_of_Reviews__c}</p>
+        <p><b>Average Rating:</b> {jobApplication.Average_Rating__c}</p>
+        <p><b>Link to Application:</b> {jobApplication.Link_to_Application__c}</p>
+        <p><b>Cover Letter:</b> {jobApplication.Cover_Letter__c}</p>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <lightning-button label="OK" onclick={handleOkay}></lightning-button>
+    </lightning-modal-footer>
+</template>

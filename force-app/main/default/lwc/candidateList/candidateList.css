@@ -1,0 +1,8 @@
+.custom-size{
+    flex: 0 1 32%;
+    cursor: pointer;
+}
+
+.flex-gap{
+    column-gap: 1.5%;
+}
