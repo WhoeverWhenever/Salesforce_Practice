@@ -5,9 +5,13 @@
     <targets>
         <target>lightning__Tab</target>
         <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__AppPage">
+            <property name="perpage" type="Integer" default="5" label="Select the number of records per page"/>
+        </targetConfig>
+        <targetConfig targets="lightning__RecordPage">
             <property name="perpage" type="Integer" default="5" label="Select the number of records per page"/>
         </targetConfig>
     </targetConfigs>

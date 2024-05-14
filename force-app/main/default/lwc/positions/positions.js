@@ -248,6 +248,5 @@ export default class Positions extends LightningElement {
         });
 
         return columns.filter(column => objectKeys.includes(column['fieldName']));
-
      }
 }

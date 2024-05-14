@@ -1,0 +1,34 @@
+<template>
+	<lightning-card title={candidateListTitle} icon-name="utility:people">
+		<div class="slds-card__body slds-card__body_inner">
+			<template if:true={dataList}>
+				<div class="slds-grid slds-wrap flex-gap">
+					<template for:each={visibleData} for:item="candidate">
+						<div key={candidate.Id} data-id={candidate.Id} class="slds-col candidate-tile slds-var-m-vertical_x-small slds-box" onclick={handleOpenClick}
+                        aria-haspopup="dialog">
+                            <span class="slds-avatar">
+                                <lightning-avatar src={candidate.Avatar_Image__c}
+												  fallback-icon-name="standard:avatar"
+												  alternative-text="user photo" 
+                                                  class="slds-avatar_medium"></lightning-avatar>
+                              </span>
+                            <b class="slds-var-p-horizontal_small slds-text-heading_small">{candidate.Name}</b>
+                            <div class="slds-var-p-top_small">
+                                <p><b>Phone:</b> {candidate.Phone__c}</p>
+                                <p><b>Email:</b> {candidate.Email__c}</p>
+                            </div>
+						</div>
+					</template>
+				</div>
+			</template>
+			<template lwc:if={errorMessages.length}>
+                <div class="error-message">
+                    <p class="error-title">Errors occured:</p>
+                    <template for:each={errorMessages} for:item="em" for:index="index">
+                        <p class="error-text" key={em}>{em}</p>
+                    </template>
+                </div>
+            </template>
+		</div>
+	</lightning-card>
+</template>

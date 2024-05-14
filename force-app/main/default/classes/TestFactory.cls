@@ -68,6 +68,15 @@ public with sharing class TestFactory {
         return jobApplications;
     }
 
+    public static List<Job_Application__c> applyCandidatesForPosition(List<Candidate__c> candidates, Position__c position){
+        List<Job_Application__c> jobApplications = new List<Job_Application__c>();
+        for (Integer i = 0; i < candidates.size(); i++){
+            jobApplications.add(getJobApplication(candidates[i].Id, position.Id));
+        }
+        
+        return jobApplications;
+    }
+
     public static List<Review__c> generateReviews(Integer perJobApplication, List<Job_Application__c> jobApplications){
         List<Review__c> reviews = new List<Review__c>();
         for(Integer i = 0; i < jobApplications.size(); i++){

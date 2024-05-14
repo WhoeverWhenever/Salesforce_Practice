@@ -39,10 +39,6 @@ export default class Paginator extends LightningElement {
                 this.setPages();
                 this.sendRecordsPerPage();
                 break;
-            case 'sendFilterSelected':
-                this.page = 1;
-                this.sendCurrentPage();
-                break;
         }
     }
 

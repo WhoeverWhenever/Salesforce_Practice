@@ -1,0 +1,63 @@
+<template>
+    <lightning-modal-header class="modal-header" label={candidate.Name} onclick={navigateToRecordPage}>
+        <div class="tooltip-display slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position:absolute;top:-80%;left:0;">
+            <div class="slds-popover__body">Go to Candidate Details</div>
+          </div>
+    </lightning-modal-header>
+    <lightning-modal-body>
+        <div class="candidate-info text-size-1_5-em slds-grid slds-wrap slds-grid_align-space slds-text-align_center slds-var-m-bottom_small">
+            <p class="candidate-info__item slds-col slds-var-p-bottom_small"><b>Phone:</b> {candidate.Phone__c}</p>
+            <p class="candidate-info__item slds-col slds-var-p-bottom_small"><b>Email:</b> {candidate.Email__c}</p>
+            <p class="candidate-info__item slds-col slds-var-p-bottom_small"><b>Location:</b> {candidate.Location__c}</p>
+            <p class="candidate-info__item slds-col slds-var-p-bottom_small"><b>CV Link: </b><a href={candidate.CV_Link__c}>{candidate.CV_Link__c}</a></p>
+            <p class="candidate-info__item slds-col slds-var-p-bottom_small"><b>Ready to Relocate:</b> {candidate.Ready_to_Relocate__c}</p>
+            <p class="candidate-info__item slds-col slds-var-p-bottom_small"><b>Owner: </b>
+                <template lwc:if={displayAvatars}>
+                    <span class="slds-avatar">
+                        <lightning-avatar src={owner.SmallPhotoUrl}
+                                        fallback-icon-name="standard:avatar"
+                                        alternative-text="owner photo" 
+                                        variant="circle"
+                                        class="slds-avatar_medium">
+                        </lightning-avatar>
+                    </span>
+                </template> {owner.Name}
+            </p>
+              <p class="candidate-info__item slds-col slds-var-p-bottom_small"><b>Created By: </b> 
+                <template lwc:if={displayAvatars}>
+                    <span class="slds-avatar">
+                        <lightning-avatar src={creator.SmallPhotoUrl}
+                                        fallback-icon-name="standard:avatar"
+                                        alternative-text="owner photo" 
+                                        variant="circle"
+                                        class="slds-avatar_medium">
+                        </lightning-avatar>
+                    </span>
+                </template> {creator.Name}
+            </p>
+              <p class="candidate-info__item slds-col slds-var-p-bottom_small"><b>Last Modified By: </b> 
+                <template lwc:if={displayAvatars}>
+                    <span class="slds-avatar">
+                        <lightning-avatar src={modifier.SmallPhotoUrl}
+                                        fallback-icon-name="standard:avatar"
+                                        alternative-text="owner photo" 
+                                        variant="circle"
+                                        class="slds-avatar_medium">
+                        </lightning-avatar>
+                    </span>
+                </template> {modifier.Name}
+        </p>
+        </div>
+        <h2 class="ja-title slds-text-heading_medium slds-text-align_center slds-var-m-bottom_small slds-var-p-top_small">Job Application</h2>
+        <div class="ja-info text-size-1_5-em slds-grid slds-wrap slds-grid_align-space slds-text-align_center">
+            <p class="ja-info__item slds-col slds-var-p-bottom_small"><b>Status:</b> {jobApplication.Status__c}</p>
+            <p class="ja-info__item slds-col slds-var-p-bottom_small"><b>Link to Application:</b> {jobApplication.Link_to_Application__c}</p>
+            <p class="ja-info__item slds-col slds-var-p-bottom_small"><b>Number of Reviews:</b> {jobApplication.Number_of_Reviews__c}</p>
+            <p class="ja-info__item slds-col slds-var-p-bottom_small"><b>Average Rating:</b> {jobApplication.Average_Rating__c}</p>
+        </div>
+        <b class="text-size-1_5-em">Cover Letter:</b><p class="ja-info__cover-letter text-size-1_5-em">{jobApplication.Cover_Letter__c}</p>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <lightning-button label="OK" onclick={handleOkay}></lightning-button>
+    </lightning-modal-footer>
+</template>

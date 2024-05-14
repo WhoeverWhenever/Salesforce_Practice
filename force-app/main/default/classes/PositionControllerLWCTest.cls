@@ -37,4 +37,31 @@ private with sharing class PositionControllerLWCTest {
             
           }
     }
+
+    public static testMethod void testGetRelatedCandidates() {
+
+        Position__c testPosition = TestFactory.getPosition('TestPosition');
+        insert testPosition;
+
+        List<Candidate__c> testCandidates = TestFactory.generateCandidates(5);
+        insert testCandidates;
+
+        List<Job_Application__c> testJobApplications = TestFactory.applyCandidatesForPosition(testCandidates, testPosition);
+        insert testJobApplications;
+
+        List<Candidate__c> relatedCandidates = PositionControllerLWC.getRelatedCandidatesWithJAs(testPosition.Id);
+        System.assertEquals(5, relatedCandidates.size());
+
+        User stdEmployee = TestFactory.getUser('employeeUser', 'Standard Employee');
+
+        System.runAs(stdEmployee){
+            try {
+                List<Candidate__c> newRelatedCandidates = PositionControllerLWC.getRelatedCandidatesWithJAs(testPosition.Id);
+                Assert.fail('An exception should have been thrown');
+            } catch (Exception e) {
+                
+            }
+        }
+
+    }
 }
