@@ -1,3 +1,46 @@
-.pointer{
+.modal-header{
+    --slds-c-modal-header-color-background: #1b5f9d;
+    --slds-c-modal-heading-font-size: 1.75em;
+    --slds-c-modal-heading-font-weight: var(--lwc-fontWeightBold, 700);
+    --slds-c-modal-header-text-color: #ffffff;
+}
+
+.modal-header:hover{
     cursor: pointer;
+    --slds-c-modal-header-color-background: #307bc1;
+    --slds-c-popover-display: block;
+}
+
+.modal-header:hover .tooltip-display{
+    display: block;
+    --slds-c-tooltip-color-background: #1b5f9d;
+    --slds-c-tooltip-text-color: #ffffff;
+    --slds-c-tooltip-font-size: 1.25em;
+}
+
+.text-size-1_5-em{
+    font-size: 1.5em;
+}
+
+.candidate-info__item{
+    flex: 0 1 45%;
+}
+
+.ja-title{
+    font-size: 1.75em;
+    font-weight: var(--lwc-fontWeightBold, 700);
+    border-top: #1b5f9d var(--lwc-borderWidthThin, 1px) solid;
+}
+
+.ja-info__item{
+    flex: 0 1 45%;
+}
+
+.ja-info__cover-letter{
+    overflow-y: auto;
+    max-height: 5em;
+}
+
+.tooltip-display{
+    display: none;
 }

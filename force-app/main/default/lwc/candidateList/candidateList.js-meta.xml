@@ -5,4 +5,9 @@
 <targets>
 	<target>lightning__RecordPage</target>
 </targets>
+<targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="displayAvatars" type="Boolean" default="true" label="Display avatars in custom fields of candidate's details"/>
+        </targetConfig>
+    </targetConfigs>
 </LightningComponentBundle>

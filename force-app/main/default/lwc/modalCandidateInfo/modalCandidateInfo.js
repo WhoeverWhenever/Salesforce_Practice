@@ -1,14 +1,16 @@
-import { LightningElement, api } from 'lwc';
+import { api, track, wire } from 'lwc';
 import LightningModal from 'lightning/modal';
-import { NavigationMixin } from 'lightning/navigation';
 
 export default class ModalCandidateInfo extends LightningModal {
     @api candidate;
     @api jobApplication;
+    @api owner;
+    @api creator;
+    @api modifier;
+    @api displayAvatars;
 
     connectedCallback(){
         console.log("Opened");
-        console.log(JSON.stringify(this.jobApplication));
     }
 
     handleOkay() {
@@ -17,7 +19,6 @@ export default class ModalCandidateInfo extends LightningModal {
 
     navigateToRecordPage() {
         console.log("Navigate");
-        console.log(this.candidate.Id);
         this.close({navigateToPage: true, candidateId: this.candidate.Id});
     }
 }
