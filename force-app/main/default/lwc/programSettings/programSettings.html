@@ -1,0 +1,54 @@
+<template>
+    <lightning-card title="Program Settings">
+        <div class="slds-grid slds-wrap slds-grid_vertical-stretch">
+            <div class="slds-col slds-box">
+                    <lightning-combobox
+                        name="tileOptions"
+                        label="Candidate List Tile Fieldset"
+                        placeholder="Select an option"
+                        options={tileOptions}
+                        onchange={handleTileOptions}>
+                    </lightning-combobox>
+                    <lightning-card if:true={selectedTileOption} title="Displayed Fields" class="fields">
+                        <ul>
+                            <template for:each={selectedTileOption.fields} for:item="field">
+                                <li key={field}>{field}</li>
+                            </template>
+                        </ul>
+                    </lightning-card>
+            </div>
+            <div class="slds-col slds-box">
+                    <lightning-combobox
+                        name="modalCandidateOptions"
+                        label="Candidate List Modal Fieldset for candidates"
+                        placeholder="Select an option"
+                        options={modalCandidateOptions}
+                        onchange={handleModalCandidateOptions}>
+                    </lightning-combobox>
+                    <lightning-card if:true={selectedModalCandidateOption} title="Displayed Fields" class="fields">
+                        <ul>
+                            <template for:each={selectedModalCandidateOption.fields} for:item="field">
+                                <li key={field}>{field}</li>
+                            </template>
+                        </ul>
+                    </lightning-card>
+            </div>
+            <div class="slds-col slds-box">
+                    <lightning-combobox
+                        name="modalJobApplicationOptions"
+                        label="Candidate List Modal Fieldset for job applications"
+                        placeholder="Select an option"
+                        options={modalJobApplicationOptions}
+                        onchange={handleModalJobApplicationOptions}>
+                    </lightning-combobox>
+                    <lightning-card if:true={selectedModalJobApplicationOption} title="Displayed Fields" class="fields">
+                        <ul>
+                            <template for:each={selectedModalJobApplicationOption.fields} for:item="field">
+                                <li key={field}>{field}</li>
+                            </template>
+                        </ul>
+                    </lightning-card>
+            </div>
+        </div>
+    </lightning-card>
+</template>

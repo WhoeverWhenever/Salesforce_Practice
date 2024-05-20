@@ -14,8 +14,9 @@
                               </span>
                             <b class="slds-var-p-horizontal_small slds-text-heading_small">{candidate.Name}</b>
                             <div class="slds-var-p-top_small">
-                                <p><b>Phone:</b> {candidate.Phone__c}</p>
-                                <p><b>Email:</b> {candidate.Email__c}</p>
+                                <template for:each={candidateTileFields} for:item="tileField">
+                                    <p key={tileField}><b>{tileField}</b> candidate.Field__c</p>
+                                </template>
                             </div>
 						</div>
 					</template>
