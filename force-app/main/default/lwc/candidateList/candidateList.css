@@ -1,6 +1,14 @@
 .candidate-tile{
     flex: 0 1 32%;
     cursor: pointer;
+    overflow: hidden;
+}
+
+.crop{
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .candidate-tile:hover{

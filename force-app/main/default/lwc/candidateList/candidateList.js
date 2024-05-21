@@ -26,12 +26,9 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     @track endIndex = 0;
     @track currentUserPermissionsNames = [];
     @track recruitingAppSettings;
-    @track candidateTileData = [];
-    @track candidateModalData = [];
-    @track jobApplicationModalData = [];
-    @track candidateTileFields = [];
-    @track candidateModalFields = [];
-    @track jobApplicationModalFields = [];
+    @track candidateTileData;
+    @track candidateModalData;
+    @track jobApplicationModalData;
     recordsPerPage;
     currentPage = 1;
     visibleData = [];
@@ -42,17 +39,16 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     @wire(MessageContext)
     messageContext;
 
-    @wire(getRelatedCandidatesWithJAsByQuery, {positionId: "$recordId", candidateQueryData: '$candidateQueryData', jobApplicationQueryData: '$jobApplicationModalData'})
+    @wire(getRelatedCandidatesWithJAsByQuery, {positionId: "$recordId", candidateQueryData: '$candidateQueryData', jobApplicationQueryData: '$jobApplicationQueryData'})
     candidateData({error, data}){
         if(data){
             this.dataList = data;
             this.sendNumberOfRecords();
-            //this.errorMessages.shift();
+            console.log(JSON.stringify(this.dataList));
         }
         else if(error){
             this.dataList = [];
-            console.error(error);
-            //this.errorMessages.push(error.body.message);
+            this.errorMessages.push(JSON.stringify(error));
         }
     }
 
@@ -62,7 +58,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
             this.currentUserProfileName = data;
         }
         else if(error){
-            console.log(error.body.message);
+            console.error(error.body.message);
         }
     }
 
@@ -72,7 +68,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
             this.currentUserPermissionsNames = data;
         }
         else if(error){
-            console.log(error.body.message);
+            console.error(error.body.message);
         }
     }
 
@@ -82,44 +78,40 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
             this.recruitingAppSettings = data;
         }
         else if(error){
-            console.log(error.body.message);
+            console.error(error.body.message);
         }
     }
 
     @wire(getFieldSetNamesWithPaths, {sObjectName: '$candidateSObjectName', fieldSetName: '$recruitingAppSettings.Candidate_Tile__c'})
     wiredCandidateTileFields({error, data}){
         if(data){
-            let tileData = data;
-            this.candidateTileData = Object.values(tileData);
-            this.candidateTileFields = Object.keys(tileData);
-            console.log(JSON.stringify(this.candidateModalFields));
+            this.candidateTileData = data;
         }
         else if(error){
-            console.log(error.body.message);
+            this.candidateTileData = undefined;
+            console.error(error.body.message);
         }
     }
 
     @wire(getFieldSetNamesWithPaths, {sObjectName: '$candidateSObjectName', fieldSetName: '$recruitingAppSettings.Candidate_Modal__c'})
     wiredCandidateModalFields({error, data}){
         if(data){
-            let modalData = data;
-            this.candidateModalData = Object.values(modalData);
-            this.candidateModalFields = Object.keys(modalData);
+            this.candidateModalData  = data;
         }
         else if(error){
-            console.log(error.body.message);
+            this.candidateModalData  = undefined;
+            console.error(error.body.message);
         }
     }
 
     @wire(getFieldSetNamesWithPaths, {sObjectName: '$jobApplicationSObjectName', fieldSetName: '$recruitingAppSettings.Job_Application_Candidate_Modal__c'})
     wiredJobApplicationFields({error, data}){
         if(data){
-            let jaData = data;
-            this.jobApplicationModalData = Object.values(jaData);
-            this.jobApplicationModalFields = Object.keys(jaData);
+            this.jobApplicationModalData = data;
         }
         else if(error){
-            console.log(error.body.message);
+            this.jobApplicationModalData = undefined;
+            console.error(error.body.message);
         }
     }
 
@@ -189,44 +181,71 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     }
 
     sendNumberOfRecords(){
-        if(this.dataList.length === 0){
-            const message = {
-                action: "sendNumberOfRecords",
-                actionData: {totalRecords: 0}
-            }
-            publish(this.messageContext, PaginationChannel, message);
+        const message = {
+            action: "sendNumberOfRecords",
+            actionData: {totalRecords: this.dataList.length}
         }
-        else{
-            const message = {
-                action: "sendNumberOfRecords",
-                actionData: {totalRecords: this.dataList.length}
-            }
-            publish(this.messageContext, PaginationChannel, message);
-        }
+        publish(this.messageContext, PaginationChannel, message);
     }
 
     pageData = ()=>{
         this.startIndex = this.recordsPerPage*(this.currentPage-1);
         this.endIndex = this.recordsPerPage*this.currentPage;
-        this.visibleData = this.dataList.slice(this.startIndex, this.endIndex);
-     }
-
-     get hasInterviewerPermissionSet(){
-        return this.currentUserPermissionsNames.some(item => item === 'Interviewer');
+        this.visibleData = this.candidateTileFieldValues.slice(this.startIndex, this.endIndex);
      }
 
      get devName(){
-        if(this.hasInterviewerPermissionSet && this.currentUserProfileName !== 'Recruiter'){
-            return 'Interviewer_Settings';
-        }
-        else{
-            return 'Recruiter_Settings';
+        if(this.currentUserPermissionsNames.length > 0){
+            let hasInterviewerPermissionSet = this.currentUserPermissionsNames.some(item => item === 'Interviewer');
+            if(hasInterviewerPermissionSet && this.currentUserProfileName !== 'Recruiter'){
+                return 'Interviewer_Settings';
+            }
+            else{
+                return 'Recruiter_Settings';
+            }
         }
      }
 
      get candidateQueryData(){
-        return [...this.candidateTileData, ...this.candidateModalData].filter((item, index) => 
-                [...this.candidateTileData, ...this.candidateModalData].indexOf(item) === index);
+        if(this.candidateTileData && this.candidateModalData){
+            const candidateTileFieldAPIs = Object.values(this.candidateTileData);
+            const candidateModalFieldAPIs = Object.values(this.candidateModalData);
+            return [...candidateTileFieldAPIs, ...candidateModalFieldAPIs].filter((item, index) => 
+                [...candidateTileFieldAPIs, ...candidateModalFieldAPIs].indexOf(item) === index);
+        }
+     }
+
+     get jobApplicationQueryData(){
+        if(this.jobApplicationModalData){
+            return Object.values(this.jobApplicationModalData);
+        }
+     }
+
+     get candidateTileFieldNames(){
+        if(this.candidateTileData){
+            return Object.keys(this.candidateTileData);
+        }
+     }
+
+     get candidateTileFieldValues(){
+        if(this.candidateTileData && this.dataList.length > 0){
+            return this.dataList.map((obj) => {
+                let fieldValues = {id: obj.Id, 
+                                   name: obj.Name,
+                                   avatar: obj.Avatar_Image__c,
+                                   fields: []};
+                Object.keys(this.candidateTileData).forEach((field) => {
+                    fieldValues.fields.push({key: field, value: obj[this.candidateTileData[field]]})
+                });
+                return fieldValues;
+            })
+        }
+     }
+
+     get candidateModalFieldNames(){
+        if(this.candidateModalData){
+            return Object.keys(this.candidateModalData);
+        }
      }
 
      get candidateListTitle(){
