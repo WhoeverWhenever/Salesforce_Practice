@@ -1,8 +1,9 @@
 import { LightningElement, track, wire, api } from 'lwc';
 import getRelatedCandidatesWithJAsByQuery from '@salesforce/apex/PositionControllerLWC.getRelatedCandidatesWithJAsByQuery';
-import getOwnerDetails from '@salesforce/apex/CandidateControllerLWC.getOwnerDetails';
-import getCreatorDetails from '@salesforce/apex/CandidateControllerLWC.getCreatorDetails';
-import getModifierDetails from '@salesforce/apex/CandidateControllerLWC.getModifierDetails';
+// import getOwnerDetails from '@salesforce/apex/CandidateControllerLWC.getOwnerDetails';
+// import getCreatorDetails from '@salesforce/apex/CandidateControllerLWC.getCreatorDetails';
+// import getModifierDetails from '@salesforce/apex/CandidateControllerLWC.getModifierDetails';
+import getUserDetails from '@salesforce/apex/CandidateControllerLWC.getUserDetails';
 import modalWindow from 'c/modalCandidateInfo';
 import { NavigationMixin } from 'lightning/navigation';
 import PaginationChannel from '@salesforce/messageChannel/paginationChannel__c';
@@ -19,9 +20,9 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     @track relatedJobApplication;
     @track dataList = [];
     @track errorMessages = [];
-    @track owner;
-    @track creator;
-    @track modifier;
+    // @track owner;
+    // @track creator;
+    // @track modifier;
     @track startIndex = 0;
     @track endIndex = 0;
     @track currentUserPermissionsNames = [];
@@ -34,6 +35,8 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     visibleData = [];
     candidateSObjectName = 'Candidate__c';
     jobApplicationSObjectName = 'Job_Application__c';
+    candidateAvatarFields = ['Owner ID', 'Created By ID', 'Last Modified By ID'];
+    candidateAvatarFieldIds = [];
     
 
     @wire(MessageContext)
@@ -44,7 +47,6 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
         if(data){
             this.dataList = data;
             this.sendNumberOfRecords();
-            console.log(JSON.stringify(this.dataList));
         }
         else if(error){
             this.dataList = [];
@@ -117,17 +119,12 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
 
     async handleOpenClick(event) {
         const candidateId = event.currentTarget.dataset.id;
-        this.selectedCandidate = this.dataList.find(candidate => candidate.Id === candidateId);
-        this.relatedJobApplication = Object.assign({}, ...this.selectedCandidate.Job_Applications__r);
-        this.owner = await getOwnerDetails({candidateId: this.selectedCandidate.Id});
-        this.creator = await getCreatorDetails({candidateId: this.selectedCandidate.Id});
-        this.modifier = await getModifierDetails({candidateId: this.selectedCandidate.Id});
+        this.selectedCandidate = this.candidateModalFields.find(candidate => candidate.id === candidateId);
+        this.relatedJobApplication = this.getJobApplicationModalFields(Object.assign({}, ...this.selectedCandidate.jobApplication));
+        await this.getCandidateAvatarFieldIds(this.selectedCandidate.avatarFields);
 
         modalWindow.open({
             candidate : this.selectedCandidate,
-            owner: this.owner,
-            creator: this.creator,
-            modifier: this.modifier,
             jobApplication: this.relatedJobApplication,
             displayAvatars: this.displayAvatars,
             size: 'medium'
@@ -191,7 +188,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     pageData = ()=>{
         this.startIndex = this.recordsPerPage*(this.currentPage-1);
         this.endIndex = this.recordsPerPage*this.currentPage;
-        this.visibleData = this.candidateTileFieldValues.slice(this.startIndex, this.endIndex);
+        this.visibleData = this.candidateTileFields.slice(this.startIndex, this.endIndex);
      }
 
      get devName(){
@@ -221,18 +218,13 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
         }
      }
 
-     get candidateTileFieldNames(){
-        if(this.candidateTileData){
-            return Object.keys(this.candidateTileData);
-        }
-     }
-
-     get candidateTileFieldValues(){
+     get candidateTileFields(){
         if(this.candidateTileData && this.dataList.length > 0){
             return this.dataList.map((obj) => {
                 let fieldValues = {id: obj.Id, 
                                    name: obj.Name,
                                    avatar: obj.Avatar_Image__c,
+                                   jobApplication: obj.Job_Applications__r,
                                    fields: []};
                 Object.keys(this.candidateTileData).forEach((field) => {
                     fieldValues.fields.push({key: field, value: obj[this.candidateTileData[field]]})
@@ -242,9 +234,50 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
         }
      }
 
-     get candidateModalFieldNames(){
-        if(this.candidateModalData){
-            return Object.keys(this.candidateModalData);
+     get candidateModalFields(){
+        if(this.candidateModalData && this.dataList.length > 0){
+            return this.dataList.map((obj) => {
+                let fieldValues = {id: obj.Id, 
+                                   name: obj.Name,
+                                   avatar: obj.Avatar_Image__c,
+                                   jobApplication: obj.Job_Applications__r,
+                                   fields: [],
+                                   avatarFields: []};
+                Object.keys(this.candidateModalData).forEach((field) => {
+                    if(this.candidateAvatarFields.includes(field)){
+                        fieldValues.avatarFields.push({key: field.slice(0, field.length-3), value: obj[this.candidateModalData[field]]});
+                    }
+                    else{
+                        fieldValues.fields.push({key: field, value: obj[this.candidateModalData[field]]});
+                    }
+                });
+                return fieldValues;
+            })
+        }
+     }
+
+     getJobApplicationModalFields(jobApplication){
+        if(this.jobApplicationModalData && jobApplication){
+            let fieldValues = {id: jobApplication.Id,
+                               coverLetter: jobApplication.Cover_Letter__c,
+                               fields: []};
+            Object.keys(this.jobApplicationModalData).forEach((field) => {
+                fieldValues.fields.push({key: field, value: jobApplication[this.jobApplicationModalData[field]]})
+            });
+            return fieldValues;
+        }
+     }
+
+     async getCandidateAvatarFieldIds(candidateAvatarFields){
+        const ids = new Set();
+        if(candidateAvatarFields){
+            Object.values(candidateAvatarFields).forEach((field) => {
+                ids.add(field.value);
+            });
+            const users = await getUserDetails({userIds: Array.from(ids)});
+            Object.values(candidateAvatarFields).forEach((field) => {
+                field.value = users.find((user) => user.Id === field.value);
+            });
         }
      }
 
