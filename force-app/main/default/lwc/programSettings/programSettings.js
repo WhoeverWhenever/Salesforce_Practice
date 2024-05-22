@@ -7,7 +7,6 @@ export default class ProgramSettings extends LightningElement {
     @track selectedTileOption;
     @track selectedModalCandidateOption;
     @track selectedModalJobApplicationOption;
-    fieldSetData = 'names';
     candidateSObjectName = 'Candidate__c';
     jobApplicationSObjectName = 'Job_Application__c';
 

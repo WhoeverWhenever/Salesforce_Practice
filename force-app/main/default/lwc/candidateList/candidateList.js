@@ -1,8 +1,5 @@
 import { LightningElement, track, wire, api } from 'lwc';
 import getRelatedCandidatesWithJAsByQuery from '@salesforce/apex/PositionControllerLWC.getRelatedCandidatesWithJAsByQuery';
-// import getOwnerDetails from '@salesforce/apex/CandidateControllerLWC.getOwnerDetails';
-// import getCreatorDetails from '@salesforce/apex/CandidateControllerLWC.getCreatorDetails';
-// import getModifierDetails from '@salesforce/apex/CandidateControllerLWC.getModifierDetails';
 import getUserDetails from '@salesforce/apex/CandidateControllerLWC.getUserDetails';
 import modalWindow from 'c/modalCandidateInfo';
 import { NavigationMixin } from 'lightning/navigation';
@@ -20,9 +17,6 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     @track relatedJobApplication;
     @track dataList = [];
     @track errorMessages = [];
-    // @track owner;
-    // @track creator;
-    // @track modifier;
     @track startIndex = 0;
     @track endIndex = 0;
     @track currentUserPermissionsNames = [];
@@ -36,7 +30,6 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     candidateSObjectName = 'Candidate__c';
     jobApplicationSObjectName = 'Job_Application__c';
     candidateAvatarFields = ['Owner ID', 'Created By ID', 'Last Modified By ID'];
-    candidateAvatarFieldIds = [];
     
 
     @wire(MessageContext)
@@ -191,6 +184,34 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
         this.visibleData = this.candidateTileFields.slice(this.startIndex, this.endIndex);
      }
 
+     getJobApplicationModalFields(jobApplication){
+        if(this.jobApplicationModalData && jobApplication){
+            let fieldValues = {id: jobApplication.Id,
+                               coverLetter: jobApplication.Cover_Letter__c,
+                               fields: []};
+
+            Object.keys(this.jobApplicationModalData).forEach((field) => {
+                fieldValues.fields.push({key: field, value: jobApplication[this.jobApplicationModalData[field]]})
+            });
+
+            return fieldValues;
+        }
+     }
+
+     async getCandidateAvatarFieldIds(candidateAvatarFields){
+        const ids = new Set();
+        if(candidateAvatarFields){
+            Object.values(candidateAvatarFields).forEach((field) => {
+                ids.add(field.value);
+            });
+
+            const users = await getUserDetails({userIds: Array.from(ids)});
+            Object.values(candidateAvatarFields).forEach((field) => {
+                field.value = users.find((user) => user.Id === field.value);
+            });
+        }
+     }
+
      get devName(){
         if(this.currentUserPermissionsNames.length > 0){
             let hasInterviewerPermissionSet = this.currentUserPermissionsNames.some(item => item === 'Interviewer');
@@ -207,6 +228,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
         if(this.candidateTileData && this.candidateModalData){
             const candidateTileFieldAPIs = Object.values(this.candidateTileData);
             const candidateModalFieldAPIs = Object.values(this.candidateModalData);
+
             return [...candidateTileFieldAPIs, ...candidateModalFieldAPIs].filter((item, index) => 
                 [...candidateTileFieldAPIs, ...candidateModalFieldAPIs].indexOf(item) === index);
         }
@@ -226,9 +248,11 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
                                    avatar: obj.Avatar_Image__c,
                                    jobApplication: obj.Job_Applications__r,
                                    fields: []};
+                                   
                 Object.keys(this.candidateTileData).forEach((field) => {
                     fieldValues.fields.push({key: field, value: obj[this.candidateTileData[field]]})
                 });
+
                 return fieldValues;
             })
         }
@@ -243,6 +267,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
                                    jobApplication: obj.Job_Applications__r,
                                    fields: [],
                                    avatarFields: []};
+
                 Object.keys(this.candidateModalData).forEach((field) => {
                     if(this.candidateAvatarFields.includes(field)){
                         fieldValues.avatarFields.push({key: field.slice(0, field.length-3), value: obj[this.candidateModalData[field]]});
@@ -251,33 +276,9 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
                         fieldValues.fields.push({key: field, value: obj[this.candidateModalData[field]]});
                     }
                 });
+
                 return fieldValues;
             })
-        }
-     }
-
-     getJobApplicationModalFields(jobApplication){
-        if(this.jobApplicationModalData && jobApplication){
-            let fieldValues = {id: jobApplication.Id,
-                               coverLetter: jobApplication.Cover_Letter__c,
-                               fields: []};
-            Object.keys(this.jobApplicationModalData).forEach((field) => {
-                fieldValues.fields.push({key: field, value: jobApplication[this.jobApplicationModalData[field]]})
-            });
-            return fieldValues;
-        }
-     }
-
-     async getCandidateAvatarFieldIds(candidateAvatarFields){
-        const ids = new Set();
-        if(candidateAvatarFields){
-            Object.values(candidateAvatarFields).forEach((field) => {
-                ids.add(field.value);
-            });
-            const users = await getUserDetails({userIds: Array.from(ids)});
-            Object.values(candidateAvatarFields).forEach((field) => {
-                field.value = users.find((user) => user.Id === field.value);
-            });
         }
      }
 

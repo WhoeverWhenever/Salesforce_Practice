@@ -12,7 +12,13 @@ public with sharing class MetadataControllerLWC {
     @AuraEnabled(cacheable=true)
     public static Recruiting_App_Setting__mdt getRecruitingAppSettings(String developerName){
         try {
-            return Recruiting_App_Setting__mdt.getInstance(developerName);
+            Recruiting_App_Setting__mdt setting = Recruiting_App_Setting__mdt.getInstance(developerName);
+            if(setting != null){
+                return setting;
+            }
+            else {
+                throw new RecruitingAppUtilitiesException('Couldn\'t find needed settings!');
+            }
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -23,7 +29,6 @@ public with sharing class MetadataControllerLWC {
         List<String> result = new List<String>();
         try {
             SObjectType objToken = Schema.getGlobalDescribe().get(sObjectName);
-            System.debug(objToken);
             Schema.DescribeSObjectResult description = objToken.getDescribe();
             Map<String, Schema.FieldSet> fieldSetMap = description.fieldsets.getMap();
 
@@ -44,7 +49,6 @@ public with sharing class MetadataControllerLWC {
         Map<String, String> result = new Map<String, String>();
         try {
             SObjectType objToken = Schema.getGlobalDescribe().get(sObjectName);
-            System.debug(objToken);
             Schema.DescribeSObjectResult description = objToken.getDescribe();
             Map<String, Schema.FieldSet> fieldSetMap = description.fieldsets.getMap();
 

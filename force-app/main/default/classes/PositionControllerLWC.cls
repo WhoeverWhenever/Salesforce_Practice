@@ -59,21 +59,12 @@ public with sharing class PositionControllerLWC {
         try {
             List<Job_Application__c> relatedJAs = [SELECT Candidate__c FROM Job_Application__c WHERE Position__c = :positionId];
 
-            System.debug(candidateQueryData);
-            System.debug(jobApplicationQueryData);
-
             String candidateQuery = String.join(candidateQueryData, ', ');
             String jobApplicationQuery = String.join(jobApplicationQueryData, ', ');
-
-            System.debug(candidateQuery);
-            System.debug(jobApplicationQuery);
-
 
             String fullQuery = String.format('SELECT Name, Avatar_Image__c, {0}, (SELECT Name, Candidate__c, ' +
                                 '{1}, Cover_Letter__c FROM Job_Applications__r WHERE Position__c = :positionId) ' +
                                 'FROM Candidate__c WHERE Id IN :candidateIds', new List<String>{candidateQuery, jobApplicationQuery});
-
-            System.debug(fullQuery);
             
             if (relatedJAs.size() > 0){
                 Set<Id> candidateIds = new Set<Id>();
