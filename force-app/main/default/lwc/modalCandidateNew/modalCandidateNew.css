@@ -1,0 +1,12 @@
+.candidate-form{
+    column-gap: 1.5%;
+}
+
+.candidate-form__item{
+    flex: 0 1 48%;
+    justify-content: center;
+}
+
+.header-border--top{
+    border-top: 2px solid #c9c9c9;
+}
