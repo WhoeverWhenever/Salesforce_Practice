@@ -9,6 +9,8 @@ import getCurrentUserProfileName from '@salesforce/apex/UserControllerLWC.getCur
 import getCurrentUserPermissionsNames from '@salesforce/apex/UserControllerLWC.getCurrentUserPermissionsNames';
 import getRecruitingAppSettings from '@salesforce/apex/MetadataControllerLWC.getRecruitingAppSettings';
 import getFieldSetNamesWithPaths from '@salesforce/apex/MetadataControllerLWC.getFieldSetNamesWithPaths';
+import CANDIDATE_OBJECT from '@salesforce/schema/Candidate__c';
+import JOB_APPLICATION_OBJECT from '@salesforce/schema/Job_Application__c';
 
 export default class CandidateList extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -27,8 +29,6 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
     recordsPerPage;
     currentPage = 1;
     visibleData = [];
-    candidateSObjectName = 'Candidate__c';
-    jobApplicationSObjectName = 'Job_Application__c';
     candidateAvatarFields = ['Owner ID', 'Created By ID', 'Last Modified By ID'];
     
 
@@ -77,7 +77,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
         }
     }
 
-    @wire(getFieldSetNamesWithPaths, {sObjectName: '$candidateSObjectName', fieldSetName: '$recruitingAppSettings.Candidate_Tile__c'})
+    @wire(getFieldSetNamesWithPaths, {sObjectName: CANDIDATE_OBJECT.objectApiName, fieldSetName: '$recruitingAppSettings.Candidate_Tile__c'})
     wiredCandidateTileFields({error, data}){
         if(data){
             this.candidateTileData = data;
@@ -88,7 +88,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
         }
     }
 
-    @wire(getFieldSetNamesWithPaths, {sObjectName: '$candidateSObjectName', fieldSetName: '$recruitingAppSettings.Candidate_Modal__c'})
+    @wire(getFieldSetNamesWithPaths, {sObjectName: CANDIDATE_OBJECT.objectApiName, fieldSetName: '$recruitingAppSettings.Candidate_Modal__c'})
     wiredCandidateModalFields({error, data}){
         if(data){
             this.candidateModalData  = data;
@@ -99,7 +99,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
         }
     }
 
-    @wire(getFieldSetNamesWithPaths, {sObjectName: '$jobApplicationSObjectName', fieldSetName: '$recruitingAppSettings.Job_Application_Candidate_Modal__c'})
+    @wire(getFieldSetNamesWithPaths, {sObjectName: JOB_APPLICATION_OBJECT.objectApiName, fieldSetName: '$recruitingAppSettings.Job_Application_Candidate_Modal__c'})
     wiredJobApplicationFields({error, data}){
         if(data){
             this.jobApplicationModalData = data;
@@ -128,7 +128,7 @@ export default class CandidateList extends NavigationMixin(LightningElement) {
                         type: "standard__recordPage",
                         attributes: {
                           recordId: result.candidateId,
-                          objectApiName: this.candidateSObjectName,
+                          objectApiName: CANDIDATE_OBJECT.objectApiName,
                           actionName: "view",
                         },
                       });
