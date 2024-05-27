@@ -11,7 +11,9 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     @wire(getFieldSetNamesWithPaths, {sObjectName: 'Candidate__c', fieldSetName: 'Candidate_Modal_New'})
     wiredCandidateFields({error, data}){
         if(data){
-            this.candidateFields = Object.values(data);
+            this.candidateFields = Object.values(data).map((field) => {
+                return {name: field, showAsterisk: field === 'Name'};
+            });
         }
         else if(error){
             console.error(JSON.stringify(error));
@@ -51,4 +53,15 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         })
     }
 
+    handleSubmitForm(){
+        this.template.querySelector('.candidate-form__hidden-submit').click();
+    }
+
+
+    handleCandidateSubmit(event){
+        event.preventDefault();
+        console.log('Fields')
+        console.log(event.detail.fields);
+        event.target.submit();
+    }
 }
