@@ -9,12 +9,7 @@ export default class ProgramSettingsSection extends LightningElement {
 
     async handleOptions(event) {
         if(this.comboboxOptions && this.objectName){
-            this.selectedOption = this.comboboxOptions.find(option => option.value === event.detail.value);
-            console.log(JSON.stringify(this.selectedOption));
-            console.log(this.objectName);
-            console.log(typeof this.objectName);
-            console.log(this.selectedOption.label);
-            console.log(typeof this.selectedOption.label);
+            this.selectedOption = {...this.comboboxOptions.find(option => option.value === event.detail.value)};
             try{
                 this.selectedOption.fields = await getFieldSetNames({sObjectName: this.objectName, fieldSetName: this.selectedOption.label});
             }

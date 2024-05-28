@@ -12,17 +12,6 @@ export default class ProgramSettings extends LightningElement {
     @track modalCandidateOptions;
     @track modalJobApplicationOptions;
 
-    async handleModalCandidateOptions(event) {
-        this.selectedModalCandidateOption = this.modalCandidateOptions.find(option => option.value === event.detail.value);
-        this.selectedModalCandidateOption.fields = await getFieldSetNames({sObjectName: CANDIDATE_OBJECT.objectApiName, 
-                                                                           fieldSetName: this.selectedModalCandidateOption.label});
-    }
-    async handleModalJobApplicationOptions(event) {
-        this.selectedModalJobApplicationOption = this.modalJobApplicationOptions.find(option => option.value === event.detail.value);
-        this.selectedModalJobApplicationOption.fields = await getFieldSetNames({sObjectName: JOB_APPLICATION_OBJECT.objectApiName, 
-                                                                                fieldSetName: this.selectedModalJobApplicationOption.label});
-    }
-
     @wire(getAllRecruitingAppSettings)
     wiredCustomMetadataTypes({error, data}){
         if(data){
