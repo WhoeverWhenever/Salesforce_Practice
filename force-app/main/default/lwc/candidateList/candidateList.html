@@ -4,18 +4,25 @@
 			<template if:true={dataList}>
 				<div class="slds-grid slds-wrap flex-gap">
 					<template for:each={visibleData} for:item="candidate">
-						<div key={candidate.Id} data-id={candidate.Id} class="slds-col candidate-tile slds-var-m-vertical_x-small slds-box" onclick={handleOpenClick}
+						<div key={candidate.id} 
+                             data-id={candidate.id} 
+                             class="slds-col candidate-tile slds-var-m-vertical_x-small slds-box" 
+                             onclick={handleOpenClick}
                         aria-haspopup="dialog">
                             <span class="slds-avatar">
-                                <lightning-avatar src={candidate.Avatar_Image__c}
+                                <lightning-avatar src={candidate.avatar}
 												  fallback-icon-name="standard:avatar"
 												  alternative-text="user photo" 
-                                                  class="slds-avatar_medium"></lightning-avatar>
+                                                  class="slds-avatar_medium">
+                                </lightning-avatar>
                               </span>
-                            <b class="slds-var-p-horizontal_small slds-text-heading_small">{candidate.Name}</b>
+                            <b class="slds-var-p-horizontal_small slds-text-heading_small">{candidate.name}</b>
                             <div class="slds-var-p-top_small">
-                                <p><b>Phone:</b> {candidate.Phone__c}</p>
-                                <p><b>Email:</b> {candidate.Email__c}</p>
+                                <template for:each={candidate.fields} for:item="field">
+                                    <p key={field.key} class="crop">
+                                        <b>{field.key}:</b> {field.value}
+                                    </p>
+                                </template>
                             </div>
 						</div>
 					</template>

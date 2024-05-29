@@ -62,6 +62,33 @@ private with sharing class PositionControllerLWCTest {
                 
             }
         }
+    }
 
+    public static testMethod void testGetRelatedCandidatesByQuery() {
+
+        Position__c testPosition = TestFactory.getPosition('TestPosition');
+        insert testPosition;
+
+        List<Candidate__c> testCandidates = TestFactory.generateCandidates(5);
+        insert testCandidates;
+
+        List<Job_Application__c> testJobApplications = TestFactory.applyCandidatesForPosition(testCandidates, testPosition);
+        insert testJobApplications;
+
+        List<String> c = new List<String>{'Phone__c','Email__c','CV_Link__c','Ready_to_Relocate__c','Location__c','OwnerId','CreatedById','LastModifiedById'};
+        List<String> ja = new List<String>{'Status__c','Link_to_Application__c','Average_Rating__c','Number_of_Reviews__c'};
+        List<Candidate__c> relatedCandidates = PositionControllerLWC.getRelatedCandidatesWithJAsByQuery(testPosition.Id, c, ja);
+        System.assertEquals(5, relatedCandidates.size());
+
+        User stdEmployee = TestFactory.getUser('employeeUser', 'Standard Employee');
+
+        System.runAs(stdEmployee){
+            try {
+                List<Candidate__c> newRelatedCandidates = PositionControllerLWC.getRelatedCandidatesWithJAsByQuery(null, null, null);
+                Assert.fail('An exception should have been thrown');
+            } catch (Exception e) {
+                
+            }
+        }
     }
 }

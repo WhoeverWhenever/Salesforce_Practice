@@ -1,0 +1,21 @@
+<template>
+    <lightning-card title="Program Settings">
+        <div class="slds-grid slds-wrap slds-grid_vertical-stretch">
+            <c-program-settings-section combobox-options={tileOptions} 
+                                        object-name={candidateObjectName} 
+                                        combobox-label="Candidate List Tile Fieldset"
+                                        class="slds-col">
+            </c-program-settings-section>
+            <c-program-settings-section combobox-options={modalCandidateOptions} 
+                                        object-name={candidateObjectName} 
+                                        combobox-label="Candidate List Modal Fieldset for candidates"
+                                        class="slds-col">
+            </c-program-settings-section>
+            <c-program-settings-section combobox-options={modalJobApplicationOptions} 
+                                        object-name={jobApplicationObjectName} 
+                                        combobox-label="Candidate List Modal Fieldset for job applications"
+                                        class="slds-col">
+            </c-program-settings-section>
+        </div>
+    </lightning-card>
+</template>

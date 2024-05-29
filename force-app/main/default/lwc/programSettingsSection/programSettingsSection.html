@@ -1,0 +1,20 @@
+<template>
+    <div class="slds-box">
+        <lightning-combobox
+            name={comboboxName}
+            label={comboboxLabel}
+            placeholder="Select an option"
+            options={comboboxOptions}
+            onchange={handleOptions}>
+        </lightning-combobox>
+        <template lwc:if={selectedOption}>
+            <lightning-card title="Displayed Fields" class="fields">
+                <ul>
+                    <template for:each={selectedOption.fields} for:item="field">
+                        <li key={field}>{field}</li>
+                    </template>
+                </ul>
+            </lightning-card>
+        </template>
+    </div>
+</template>

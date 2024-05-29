@@ -5,44 +5,25 @@ private with sharing class CandidateControllerLWCTest {
         insert testCandidate;
     }
 
-    public static testMethod void testGetOwnerDetails() {
-        Candidate__c testCandidate = [SELECT Id FROM Candidate__c][0];
+    public static testMethod void testGetUserDetails() {
+        Candidate__c testCandidate = [SELECT Id, OwnerId, CreatedById, LastModifiedById FROM Candidate__c][0];
 
-        User owner = CandidateControllerLWC.getOwnerDetails(testCandidate.Id);
-        System.assert(owner != null);
+        Set<String> ids = new Set<String>();
+
+        Map<String, Object> fieldsToValue = testCandidate.getPopulatedFieldsAsMap();
+        for(String fieldName : fieldsToValue.keySet()){
+            if(fieldName != 'Id'){
+                ids.add((String)fieldsToValue.get(fieldName));
+            }
+        }
+
+        List<String> idList = new List<String>(ids);
+
+        List<User> users = CandidateControllerLWC.getUserDetails(idList);
+        System.assert(users.size() > 0);
 
         try{
-            User owner2 = CandidateControllerLWC.getOwnerDetails(null);
-            Assert.fail('An exception should have been thrown');
-        }
-        catch(Exception e){
-
-        }
-    }
-
-    public static testMethod void testGetCreatorDetails() {
-        Candidate__c testCandidate = [SELECT Id FROM Candidate__c][0];
-
-        User creator = CandidateControllerLWC.getCreatorDetails(testCandidate.Id);
-        System.assert(creator != null);
-
-        try{
-            User creator2 = CandidateControllerLWC.getCreatorDetails(null);
-            Assert.fail('An exception should have been thrown');
-        }
-        catch(Exception e){
-
-        }
-    }
-
-    public static testMethod void testGetModifierDetails() {
-        Candidate__c testCandidate = [SELECT Id FROM Candidate__c][0];
-
-        User modifier = CandidateControllerLWC.getModifierDetails(testCandidate.Id);
-        System.assert(modifier != null);
-        
-        try{
-            User modifier2 = CandidateControllerLWC.getModifierDetails(null);
+            List<User> users2 = CandidateControllerLWC.getUserDetails(null);
             Assert.fail('An exception should have been thrown');
         }
         catch(Exception e){

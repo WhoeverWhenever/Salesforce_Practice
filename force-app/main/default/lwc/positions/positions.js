@@ -39,7 +39,7 @@ export default class Positions extends LightningElement {
     @track draftValues = [];
     lastSavedData = [];
     @track pickListOptions;
-    recordsPerPage;
+    recordsPerPage = 5;
     currentPage = 1;
     visibleData = [];
     @track errorMessages = [];
@@ -104,6 +104,7 @@ export default class Positions extends LightningElement {
                 ele.pickListOptions = this.pickListOptions;
             })
 
+            this.pageData();
             this.columns = this.filterColumns(this.data, columns);
  
             this.lastSavedData = JSON.parse(JSON.stringify(this.data));
@@ -111,7 +112,7 @@ export default class Positions extends LightningElement {
  
         } 
         else if (result.error) {
-            this.data = undefined;
+            this.data = [];
             this.errorMessages.push(result.error.body.message);
         }
     };
@@ -180,7 +181,7 @@ export default class Positions extends LightningElement {
 
             return this.refresh();
         }).catch(error => {
-            console.log(error);
+            console.error(error);
             this.showToast(toastErrorTitleLabel, errorMessageLabel, 'error', 'dismissable');
         }).finally(() => {
             this.draftValues = [];
@@ -218,16 +219,8 @@ export default class Positions extends LightningElement {
 
     handleFilterChange(event){
         this.selectedFilterOption = event.detail.value;
-        this.sendFilterSelected();
         this.pageData();
         refreshApex(this.positionData);
-    }
-
-    sendFilterSelected(){
-        const message = {
-            action: "sendFilterSelected"
-        }
-        publish(this.messageContext, PaginationChannel, message);
     }
 
     pageData = ()=>{
@@ -244,7 +237,6 @@ export default class Positions extends LightningElement {
         const fieldNames = [];
         columns.forEach((column) => {
             fieldNames.push(column['fieldName'])
-    
         });
 
         return columns.filter(column => objectKeys.includes(column['fieldName']));
