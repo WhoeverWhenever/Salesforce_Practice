@@ -18,7 +18,6 @@
                                                 onsubmit={handleCandidateSubmit} 
                                                 onsuccess={handleCandidateSuccess}>
                         <div class="slds-grid slds-wrap">
-                            <lightning-messages></lightning-messages>
                             <template for:each={candidateFields} for:item="field">
                                 <div key={field} class="slds-col slds-size_1-of-2">
                                     <template lwc:if={field.showAsterisk}>

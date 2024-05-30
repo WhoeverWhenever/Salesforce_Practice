@@ -105,7 +105,11 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
 
     handleJASubmit(event){
         event.preventDefault();
-        console.log("JAsubmit " + this.newCandidateId);
+
+        const jaFields = event.detail.fields;
+        jaFields.Candidate__c = this.newCandidateId;
+        
+        event.target.submit(jaFields);
     }
 
     handleCandidateSuccess(event){
@@ -115,10 +119,14 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         if(this.newCandidateId && this.jaFieldsAreEmpty){
             this.navigateToCandidateRecordPage();
         }
+        else if(this.newCandidateId){
+            this.hiddenJASubmit.click();
+        }
     }
 
     handleJASuccess(){
         this.showToast('Success!', 'Job Application was successfully created', 'success', 'dismissable');
+        this.navigateToCandidateRecordPage();
     }
 
     showToast(title, message, variant, mode) {
