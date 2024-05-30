@@ -2,13 +2,18 @@ import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getFieldSetNamesWithPaths from '@salesforce/apex/MetadataControllerLWC.getFieldSetNamesWithPaths';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import CANDIDATE_OBJECT from '@salesforce/schema/Candidate__c';
+import JOB_APPLICATION_OBJECT from '@salesforce/schema/Job_Application__c';
 
 export default class ModalCandidateNew extends NavigationMixin(LightningElement) {
 
     @track isModalOpen;
     @track candidateFields;
     @track jobApplicationFields;
-    newCandidateId;
+    @track newCandidateId;
+    @track candidateFormIsSubmitted = false;
+    candidateApiName = CANDIDATE_OBJECT.objectApiName;
+    jobApplicationApiName = JOB_APPLICATION_OBJECT.objectApiName;
     jaFieldsAreEmpty = true;
     candidateForm;
     jaForm;
@@ -84,41 +89,36 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     }
 
     handleSubmitForm(){
+        this.jaFieldsAreEmpty = Object.values(this.template.querySelectorAll(".ja-form lightning-input-field")).every(el => !el.value);
         this.hiddenCandidateSubmit.click();
-        this.hiddenJASubmit.click();
+        if (this.candidateFormIsSubmitted){
+            this.candidateForm.submit();
+        }
     }
 
 
     handleCandidateSubmit(event){
         event.preventDefault();
-        console.log('Candidate Fields')
-        console.log(event.detail.fields);
-        console.log(this.template.querySelectorAll(".ja-form lightning-input-field"));
-        this.jaFieldsAreEmpty = Object.values(this.template.querySelectorAll(".ja-form lightning-input-field")).every(el => {
-            console.log(el.value);
-            return !el.value}
-        );
-        console.log(this.jaFieldsAreEmpty);
-        if(this.jaFieldsAreEmpty){
-            event.target.submit();
-        }
+
+        event.target.submit(event.detail.fields);
     }
 
     handleJASubmit(event){
         event.preventDefault();
-        console.log('JA Fields')
-        console.log(event.detail.fields);
-        // this.jaFieldsAreEmpty = Object.values(event.detail.fields).every(value => !value);
-        // console.log(this.jaFieldsAreEmpty);
+        console.log("JAsubmit " + this.newCandidateId);
     }
 
     handleCandidateSuccess(event){
         this.showToast('Success!', 'Candidate was successfully created', 'success', 'dismissable');
         this.newCandidateId = event.detail.id;
-        console.log()
-        if(this.newCandidateId){
+        this.candidateFormIsSubmitted = true;
+        if(this.newCandidateId && this.jaFieldsAreEmpty){
             this.navigateToCandidateRecordPage();
         }
+    }
+
+    handleJASuccess(){
+        this.showToast('Success!', 'Job Application was successfully created', 'success', 'dismissable');
     }
 
     showToast(title, message, variant, mode) {

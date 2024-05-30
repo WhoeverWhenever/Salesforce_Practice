@@ -12,7 +12,11 @@
                     <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">New Candidate</h1>
                 </div>
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                    <lightning-record-edit-form class="candidate-form" object-api-name="Candidate__c" onsubmit={handleCandidateSubmit} onsuccess={handleCandidateSuccess}>
+                    <lightning-record-edit-form class="candidate-form" 
+                                                record-id={newCandidateId} 
+                                                object-api-name={candidateApiName} 
+                                                onsubmit={handleCandidateSubmit} 
+                                                onsuccess={handleCandidateSuccess}>
                         <div class="slds-grid slds-wrap">
                             <lightning-messages></lightning-messages>
                             <template for:each={candidateFields} for:item="field">
@@ -33,7 +37,10 @@
                     <h2 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1">New Job Application</h2>
                 </div>
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
-                    <lightning-record-edit-form class="ja-form" object-api-name="Job_Application__c"  onsubmit={handleJASubmit}>
+                    <lightning-record-edit-form class="ja-form" 
+                                                object-api-name={jobApplicationApiName}  
+                                                onsubmit={handleJASubmit} 
+                                                onsuccess={handleJASuccess}>
                         <div class="slds-grid slds-wrap">
                             <template for:each={jobApplicationFields} for:item="field">
                                 <div key={field} class="slds-col slds-size_1-of-2">
