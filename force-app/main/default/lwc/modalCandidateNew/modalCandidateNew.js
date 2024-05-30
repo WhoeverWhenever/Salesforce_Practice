@@ -14,14 +14,14 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     @track candidateFormIsSubmitted = false;
     candidateApiName = CANDIDATE_OBJECT.objectApiName;
     jobApplicationApiName = JOB_APPLICATION_OBJECT.objectApiName;
-    jaFieldsAreEmpty = true;
+    jobApplicationFieldsAreEmpty = true;
     candidateForm;
-    jaForm;
+    jobApplicationForm;
     hiddenCandidateSubmit;
-    hiddenJASubmit;
+    hiddenJobApplicationSubmit;
     hasRendered = false;
 
-    @wire(getFieldSetNamesWithPaths, {sObjectName: 'Candidate__c', fieldSetName: 'Candidate_Modal_New'})
+    @wire(getFieldSetNamesWithPaths, {sObjectName: CANDIDATE_OBJECT.objectApiName, fieldSetName: 'Candidate_Modal_New'})
     wiredCandidateFields({error, data}){
         if(data){
             this.candidateFields = Object.values(data).map((field) => {
@@ -33,7 +33,7 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         }
     }
 
-    @wire(getFieldSetNamesWithPaths, {sObjectName: 'Job_Application__c', fieldSetName: 'Job_Application_Modal_New'})
+    @wire(getFieldSetNamesWithPaths, {sObjectName: JOB_APPLICATION_OBJECT.objectApiName, fieldSetName: 'Job_Application_Modal_New'})
     wiredJobApplicationFields({error, data}){
         if(data){
             this.jobApplicationFields = Object.values(data);
@@ -45,15 +45,14 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
 
     connectedCallback(){
         this.isModalOpen = true;
-        
     }
 
     renderedCallback(){
         if(!this.hasRendered){
             this.candidateForm = this.template.querySelector('.candidate-form');
-            this.jaForm = this.template.querySelector('.ja-form');
+            this.jobApplicationForm = this.template.querySelector('.job-application-form');
             this.hiddenCandidateSubmit = this.template.querySelector('.candidate-form__hidden-submit');
-            this.hiddenJASubmit = this.template.querySelector('.ja-form__hidden-submit');
+            this.hiddenJobApplicationSubmit = this.template.querySelector('.job-application-form__hidden-submit');
             this.hasRendered = true;
         }
     }
@@ -71,7 +70,7 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         this[NavigationMixin.Navigate]({
             type: "standard__objectPage",
             attributes: {
-                objectApiName: "Candidate__c",
+                objectApiName: CANDIDATE_OBJECT.objectApiName,
                 actionName: "list"
             }
         })
@@ -82,20 +81,19 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
             type: "standard__recordPage",
             attributes: {
                 recordId: this.newCandidateId,
-                objectApiName: "Candidate__c",
+                objectApiName: CANDIDATE_OBJECT.objectApiName,
                 actionName: "view"
             }
         })
     }
 
     handleSubmitForm(){
-        this.jaFieldsAreEmpty = Object.values(this.template.querySelectorAll(".ja-form lightning-input-field")).every(el => !el.value);
+        this.jobApplicationFieldsAreEmpty = Object.values(this.template.querySelectorAll(".job-application-form lightning-input-field")).every(el => !el.value);
         this.hiddenCandidateSubmit.click();
         if (this.candidateFormIsSubmitted){
             this.candidateForm.submit();
         }
     }
-
 
     handleCandidateSubmit(event){
         event.preventDefault();
@@ -103,28 +101,35 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         event.target.submit(event.detail.fields);
     }
 
-    handleJASubmit(event){
+    handleJobApplicationSubmit(event){
         event.preventDefault();
 
-        const jaFields = event.detail.fields;
-        jaFields.Candidate__c = this.newCandidateId;
+        const jobApplicationFields = event.detail.fields;
+        jobApplicationFields.Candidate__c = this.newCandidateId;
         
-        event.target.submit(jaFields);
+        event.target.submit(jobApplicationFields);
     }
 
     handleCandidateSuccess(event){
-        this.showToast('Success!', 'Candidate was successfully created', 'success', 'dismissable');
-        this.newCandidateId = event.detail.id;
+        if(this.newCandidateId){
+            this.showToast('Success!', 'Candidate was successfully updated', 'success', 'dismissable');
+        }
+        else{
+            this.showToast('Success!', 'Candidate was successfully created', 'success', 'dismissable');
+            this.newCandidateId = event.detail.id;
+        }
+
         this.candidateFormIsSubmitted = true;
-        if(this.newCandidateId && this.jaFieldsAreEmpty){
+        
+        if(this.newCandidateId && this.jobApplicationFieldsAreEmpty){
             this.navigateToCandidateRecordPage();
         }
         else if(this.newCandidateId){
-            this.hiddenJASubmit.click();
+            this.hiddenJobApplicationSubmit.click();
         }
     }
 
-    handleJASuccess(){
+    handleJobApplicationSuccess(){
         this.showToast('Success!', 'Job Application was successfully created', 'success', 'dismissable');
         this.navigateToCandidateRecordPage();
     }

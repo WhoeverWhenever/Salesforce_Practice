@@ -2,12 +2,6 @@
     <template if:true={isModalOpen}>
         <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_medium">
             <div class="slds-modal__container">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeModal}>
-                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
-                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
-                    </svg>
-                    <span class="slds-assistive-text">Cancel and close</span>
-                </button>
                 <div class="slds-modal__header">
                     <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">New Candidate</h1>
                 </div>
@@ -36,10 +30,10 @@
                     <h2 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1">New Job Application</h2>
                 </div>
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
-                    <lightning-record-edit-form class="ja-form" 
+                    <lightning-record-edit-form class="job-application-form" 
                                                 object-api-name={jobApplicationApiName}  
-                                                onsubmit={handleJASubmit} 
-                                                onsuccess={handleJASuccess}>
+                                                onsubmit={handleJobApplicationSubmit} 
+                                                onsuccess={handleJobApplicationSuccess}>
                         <div class="slds-grid slds-wrap">
                             <template for:each={jobApplicationFields} for:item="field">
                                 <div key={field} class="slds-col slds-size_1-of-2">
@@ -47,7 +41,7 @@
                                 </div>
                             </template>
                         </div>
-                        <lightning-button type="submit" label="Create JA" class="ja-form__hidden-submit" style="display:none;"></lightning-button>
+                        <lightning-button type="submit" label="Create Job Application" class="job-application-form__hidden-submit" style="display:none;"></lightning-button>
                 </lightning-record-edit-form>
                 </div>
                 <div class="slds-modal__footer">
