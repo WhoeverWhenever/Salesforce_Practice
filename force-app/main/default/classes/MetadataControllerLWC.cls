@@ -25,6 +25,21 @@ public with sharing class MetadataControllerLWC {
     }
 
     @AuraEnabled(cacheable=true)
+    public static Candidate_Modal_New_Setting__mdt getCandidateModalNewSettings(String developerName){
+        try {
+            Candidate_Modal_New_Setting__mdt setting = Candidate_Modal_New_Setting__mdt.getInstance(developerName);
+            if(setting != null){
+                return setting;
+            }
+            else {
+                throw new RecruitingAppUtilitiesException('Couldn\'t find needed settings!');
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
     public static List<String> getFieldSetNames(String sObjectName, String fieldSetName){
         List<String> result = new List<String>();
         try {

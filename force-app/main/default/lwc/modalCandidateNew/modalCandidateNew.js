@@ -1,5 +1,6 @@
 import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
+import getCandidateModalNewSettings from '@salesforce/apex/MetadataControllerLWC.getCandidateModalNewSettings';
 import getFieldSetNamesWithPaths from '@salesforce/apex/MetadataControllerLWC.getFieldSetNamesWithPaths';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import CANDIDATE_OBJECT from '@salesforce/schema/Candidate__c';
@@ -12,6 +13,7 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     @track jobApplicationFields;
     @track newCandidateId;
     @track candidateFormIsSubmitted = false;
+    @track candidateModalNewSettings;
     candidateApiName = CANDIDATE_OBJECT.objectApiName;
     jobApplicationApiName = JOB_APPLICATION_OBJECT.objectApiName;
     jobApplicationFieldsAreEmpty = true;
@@ -21,7 +23,17 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     hiddenJobApplicationSubmit;
     hasRendered = false;
 
-    @wire(getFieldSetNamesWithPaths, {sObjectName: CANDIDATE_OBJECT.objectApiName, fieldSetName: 'Candidate_Modal_New'})
+    @wire(getCandidateModalNewSettings, {developerName: 'ModalNewSettings'})
+    wiredCandidateModalNewSettings({error, data}){
+        if(data){
+            this.candidateModalNewSettings = data;
+        }
+        else if(error){
+            console.error(error.body.message);
+        }
+    }
+
+    @wire(getFieldSetNamesWithPaths, {sObjectName: CANDIDATE_OBJECT.objectApiName, fieldSetName: '$candidateModalNewSettings.Candidate_Fieldset__c'})
     wiredCandidateFields({error, data}){
         if(data){
             this.candidateFields = Object.values(data).map((field) => {
@@ -33,7 +45,7 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         }
     }
 
-    @wire(getFieldSetNamesWithPaths, {sObjectName: JOB_APPLICATION_OBJECT.objectApiName, fieldSetName: 'Job_Application_Modal_New'})
+    @wire(getFieldSetNamesWithPaths, {sObjectName: JOB_APPLICATION_OBJECT.objectApiName, fieldSetName: '$candidateModalNewSettings.Job_Application_Fieldset__c'})
     wiredJobApplicationFields({error, data}){
         if(data){
             this.jobApplicationFields = Object.values(data);
