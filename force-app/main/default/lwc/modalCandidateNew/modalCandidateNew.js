@@ -14,6 +14,7 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     @track newCandidateId;
     @track candidateFormIsSubmitted = false;
     @track candidateModalNewSettings;
+    @track candidateFormChanged;
     candidateApiName = CANDIDATE_OBJECT.objectApiName;
     jobApplicationApiName = JOB_APPLICATION_OBJECT.objectApiName;
     jobApplicationFieldsAreEmpty = true;
@@ -101,6 +102,7 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
 
     handleSubmitForm(){
         this.jobApplicationFieldsAreEmpty = Object.values(this.template.querySelectorAll(".job-application-form lightning-input-field")).every(el => !el.value);
+        console.log(this.candidateFormChanged);
         this.hiddenCandidateSubmit.click();
         if (this.candidateFormIsSubmitted){
             this.candidateForm.submit();
@@ -113,6 +115,12 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         event.target.submit(event.detail.fields);
     }
 
+    handleCandidateChange(){
+        if(this.newCandidateId){
+            this.candidateFormChanged = true;
+        }
+    }
+
     handleJobApplicationSubmit(event){
         event.preventDefault();
 
@@ -123,15 +131,16 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     }
 
     handleCandidateSuccess(event){
-        if(this.newCandidateId){
+        if(this.newCandidateId && this.candidateFormChanged){
             this.showToast('Success!', 'Candidate was successfully updated', 'success', 'dismissable');
         }
-        else{
+        else if(!this.newCandidateId){
             this.showToast('Success!', 'Candidate was successfully created', 'success', 'dismissable');
             this.newCandidateId = event.detail.id;
         }
 
         this.candidateFormIsSubmitted = true;
+        this.candidateFormChanged = false;
         
         if(this.newCandidateId && this.jobApplicationFieldsAreEmpty){
             this.navigateToCandidateRecordPage();
