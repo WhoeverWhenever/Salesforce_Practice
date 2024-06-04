@@ -10,7 +10,8 @@
                                                 record-id={newCandidateId} 
                                                 object-api-name={candidateApiName} 
                                                 onsubmit={handleCandidateSubmit} 
-                                                onsuccess={handleCandidateSuccess}>
+                                                onsuccess={handleCandidateSuccess}
+                                                onerror={handleCandidateError}>
                         <div class="slds-grid slds-wrap">
                             <template for:each={candidateFields} for:item="field">
                                 <div key={field} class="slds-col slds-size_1-of-2">

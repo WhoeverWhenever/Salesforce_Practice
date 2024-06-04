@@ -102,9 +102,18 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         })
     }
 
+    formFieldsAreValid(fields){
+        return fields.every((element) => element.reportValidity());
+    }
+
     handleSubmitForm(){
         this.jobApplicationFieldsAreEmpty = Object.values(this.template.querySelectorAll(".job-application-form lightning-input-field")).every(el => !el.value);
         this.candidateFieldsValues = Object.values(this.template.querySelectorAll(".candidate-form lightning-input-field")).map(item => item.value);
+
+        if(!this.formFieldsAreValid([...this.template.querySelectorAll(".candidate-form lightning-input-field")])){
+            this.showToast("Something wrong!", "Please, check you input values for the candidate", "error", "dismissable");
+        }
+
         this.hiddenCandidateSubmit.click();
         if (this.candidateFormIsSubmitted){
             this.candidateFieldsChanged = !this.savedCandidateFields.every((value, index) => value === this.candidateFieldsValues[index]);
@@ -141,15 +150,24 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         this.candidateFieldsChanged = false;
         
         if(this.newCandidateId && this.jobApplicationFieldsAreEmpty){
+            this.isModalOpen = false;
             this.navigateToCandidateRecordPage();
         }
         else if(this.newCandidateId){
+            if(!this.formFieldsAreValid([...this.template.querySelectorAll(".job-application-form lightning-input-field")])){
+                this.showToast("Something wrong!", "Please, check you input values for the job application", "error", "dismissable");
+            }
             this.hiddenJobApplicationSubmit.click();
         }
     }
 
+    handleCandidateError(){
+        this.showToast("Something wrong!", "Please, check you input values for the candidate", "error", "dismissable");
+    }
+
     handleJobApplicationSuccess(){
         this.showToast('Success!', 'Job Application was successfully created', 'success', 'dismissable');
+        this.isModalOpen = false;
         this.navigateToCandidateRecordPage();
     }
 
