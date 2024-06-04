@@ -14,7 +14,9 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     @track newCandidateId;
     @track candidateFormIsSubmitted = false;
     @track candidateModalNewSettings;
-    @track candidateFormChanged;
+    @track candidateFieldsChanged;
+    @track candidateFieldsValues;
+    @track savedCandidateFields;
     candidateApiName = CANDIDATE_OBJECT.objectApiName;
     jobApplicationApiName = JOB_APPLICATION_OBJECT.objectApiName;
     jobApplicationFieldsAreEmpty = true;
@@ -102,9 +104,10 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
 
     handleSubmitForm(){
         this.jobApplicationFieldsAreEmpty = Object.values(this.template.querySelectorAll(".job-application-form lightning-input-field")).every(el => !el.value);
-        console.log(this.candidateFormChanged);
+        this.candidateFieldsValues = Object.values(this.template.querySelectorAll(".candidate-form lightning-input-field")).map(item => item.value);
         this.hiddenCandidateSubmit.click();
         if (this.candidateFormIsSubmitted){
+            this.candidateFieldsChanged = !this.savedCandidateFields.every((value, index) => value === this.candidateFieldsValues[index]);
             this.candidateForm.submit();
         }
     }
@@ -113,12 +116,6 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         event.preventDefault();
 
         event.target.submit(event.detail.fields);
-    }
-
-    handleCandidateChange(){
-        if(this.newCandidateId){
-            this.candidateFormChanged = true;
-        }
     }
 
     handleJobApplicationSubmit(event){
@@ -131,7 +128,7 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
     }
 
     handleCandidateSuccess(event){
-        if(this.newCandidateId && this.candidateFormChanged){
+        if(this.newCandidateId && this.candidateFieldsChanged){
             this.showToast('Success!', 'Candidate was successfully updated', 'success', 'dismissable');
         }
         else if(!this.newCandidateId){
@@ -140,7 +137,8 @@ export default class ModalCandidateNew extends NavigationMixin(LightningElement)
         }
 
         this.candidateFormIsSubmitted = true;
-        this.candidateFormChanged = false;
+        this.savedCandidateFields = [...this.candidateFieldsValues];
+        this.candidateFieldsChanged = false;
         
         if(this.newCandidateId && this.jobApplicationFieldsAreEmpty){
             this.navigateToCandidateRecordPage();
