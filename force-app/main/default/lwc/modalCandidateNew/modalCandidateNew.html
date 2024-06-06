@@ -1,0 +1,56 @@
+<template>
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">New Candidate</h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning-record-edit-form class="candidate-form" 
+                                                record-id={newCandidateId} 
+                                                object-api-name={candidateApiName} 
+                                                onsubmit={handleCandidateSubmit} 
+                                                onsuccess={handleCandidateSuccess}
+                                                onerror={handleCandidateError}>
+                        <div class="slds-grid slds-wrap">
+                            <template for:each={candidateFields} for:item="field">
+                                <div key={field} class="slds-col slds-size_1-of-2">
+                                    <template lwc:if={field.showAsterisk}>
+                                        <lightning-input-field field-name={field.name} required></lightning-input-field>
+                                    </template>
+                                    <template lwc:else>
+                                        <lightning-input-field field-name={field.name}></lightning-input-field>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                        <lightning-button type="submit" label="Create Candidate" class="candidate-form__hidden-submit" style="display:none;"></lightning-button>
+                </lightning-record-edit-form>
+                </div>
+                <div class="slds-modal__header header-border--top">
+                    <h2 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1">New Job Application</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+                    <lightning-record-edit-form class="job-application-form" 
+                                                object-api-name={jobApplicationApiName}  
+                                                onsubmit={handleJobApplicationSubmit} 
+                                                onsuccess={handleJobApplicationSuccess}>
+                        <div class="slds-grid slds-wrap">
+                            <template for:each={jobApplicationFields} for:item="field">
+                                <div key={field} class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name={field}></lightning-input-field>
+                                </div>
+                            </template>
+                        </div>
+                        <lightning-button type="submit" label="Create Job Application" class="job-application-form__hidden-submit" style="display:none;"></lightning-button>
+                </lightning-record-edit-form>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={closeModal}>Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick={handleSubmitForm}>Save</button>
+                </div>
+            </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>
