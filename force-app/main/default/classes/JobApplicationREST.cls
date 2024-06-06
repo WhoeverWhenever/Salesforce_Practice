@@ -4,7 +4,8 @@ global with sharing class JobApplicationREST {
     global static Job_Application__c getJobApplicationDetails() {
         RestRequest request = RestContext.request;
         String jobApplicationId = request.requestURI.substring(
-          request.requestURI.lastIndexOf('/')+1);
+                                  request.requestURI.lastIndexOf('/')+1);
+
         Job_Application__c result =  [SELECT Name,Candidate__r.Name, Position__r.Name,
                                              Status__c, Link_to_Application__c, 
                                              Cover_Letter__c, Number_of_Reviews__c, Average_Rating__c 
@@ -18,32 +19,16 @@ global with sharing class JobApplicationREST {
     global static String createJobApplication(){
         RestRequest request = RestContext.request;
         RestResponse response = RestContext.response;
-        Map<String,Object> jsonJobApplication;
+        Map<String,Object> jsonJobApplication = (Map<String,Object>)JSON.deserializeUntyped(request.requestBody.toString());
         Job_Application__c jobApplication = new Job_Application__c();
-
-        try{
-            jsonJobApplication = (Map<String,Object>)JSON.deserializeUntyped(request.requestBody.toString());
-        }
-        catch(Exception e){
-            response.statusCode = 400;
-
-            return 'Invalid data';
-        }
         
-        try{
-            for(String fieldName : jsonJobApplication.keySet()) {
-                jobApplication.put(fieldName, jsonJobApplication.get(fieldName));
-            }
-
-            insert jobApplication;
-
-            return getResultString('id', jobApplication.Id, 'created');
+        for(String fieldName : jsonJobApplication.keySet()) {
+            jobApplication.put(fieldName, jsonJobApplication.get(fieldName));
         }
-        catch(Exception e){
-            response.statusCode = 500;
 
-            return 'Error occured: ' + e.getMessage();
-        }
+        insert jobApplication;
+
+        return getResultString('id', jobApplication.Id, 'created');
     }
 
     @HttpPatch
@@ -51,34 +36,18 @@ global with sharing class JobApplicationREST {
         RestRequest request = RestContext.request;
         RestResponse response = RestContext.response;
         String jobApplicationId = request.requestURI.substring(
-          request.requestURI.lastIndexOf('/')+1);
+                                  request.requestURI.lastIndexOf('/')+1);
 
-        Map<String,Object> jsonJobApplication;
+        Map<String,Object> jsonJobApplication = (Map<String,Object>)JSON.deserializeUntyped(request.requestBody.toString());
         Job_Application__c jobApplication = [SELECT Id FROM Job_Application__c WHERE Id = :jobApplicationId];
-
-        try{
-            jsonJobApplication = (Map<String,Object>)JSON.deserializeUntyped(request.requestBody.toString());
-        }
-        catch(Exception e){
-            response.statusCode = 400;
-
-            return 'Invalid data';
-        }
         
-        try{
-            for(String fieldName : jsonJobApplication.keySet()) {
-                jobApplication.put(fieldName, jsonJobApplication.get(fieldName));
-            }
-
-            update jobApplication;
-
-            return getResultString('id', jobApplication.Id, 'updated');
+        for(String fieldName : jsonJobApplication.keySet()) {
+            jobApplication.put(fieldName, jsonJobApplication.get(fieldName));
         }
-        catch(Exception e){
-            response.statusCode = 500;
 
-            return 'Error occured: ' + e.getMessage();
-        }
+        update jobApplication;
+
+        return getResultString('id', jobApplication.Id, 'updated');
     }
 
     @HttpDelete
@@ -89,18 +58,11 @@ global with sharing class JobApplicationREST {
         String jobApplicationName = request.requestURI.substring(
                                     request.requestURI.lastIndexOf('/')+1);
 
-        try{
-            Job_Application__c jobApplication =  [SELECT Name FROM Job_Application__c WHERE Name = :jobApplicationName];
+        Job_Application__c jobApplication =  [SELECT Name FROM Job_Application__c WHERE Name = :jobApplicationName];
 
-            delete jobApplication;
+        delete jobApplication;
 
-            return getResultString('name', jobApplication.Name, 'deleted');
-        }
-        catch(Exception e){
-            response.statusCode = 500;
-
-            return 'Error occured: ' + e.getMessage();
-        }
+        return getResultString('name', jobApplication.Name, 'deleted');
     }
 
     private static String getResultString(String itemName, String item, String operation){
