@@ -37,7 +37,7 @@ global with sharing class JobApplicationREST {
 
             insert jobApplication;
 
-            return jobApplication.Id;
+            return getResultString('id', jobApplication.Id, 'created');
         }
         catch(Exception e){
             response.statusCode = 500;
@@ -72,7 +72,7 @@ global with sharing class JobApplicationREST {
 
             update jobApplication;
 
-            return jobApplication.Id;
+            return getResultString('id', jobApplication.Id, 'updated');
         }
         catch(Exception e){
             response.statusCode = 500;
@@ -94,12 +94,20 @@ global with sharing class JobApplicationREST {
 
             delete jobApplication;
 
-            return 'Job Application : ' + jobApplication.Name + ' was successfully deleted';
+            return getResultString('name', jobApplication.Name, 'deleted');
         }
         catch(Exception e){
             response.statusCode = 500;
 
             return 'Error occured: ' + e.getMessage();
         }
+    }
+
+    private static String getResultString(String itemName, String item, String operation){
+        String template = 'Job Application with the {0} \'{\'{1}\'}\' was successfully {2}';
+        List<Object> parameters = new List<Object> {itemName, item, operation};
+        String formatted = String.format(template, parameters);
+
+        return formatted;
     }
 }
