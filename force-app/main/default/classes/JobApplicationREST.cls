@@ -18,7 +18,6 @@ global with sharing class JobApplicationREST {
     @HttpPost
     global static String createJobApplication(){
         RestRequest request = RestContext.request;
-        RestResponse response = RestContext.response;
         Map<String,Object> jsonJobApplication = (Map<String,Object>)JSON.deserializeUntyped(request.requestBody.toString());
         Job_Application__c jobApplication = new Job_Application__c();
         
@@ -34,7 +33,6 @@ global with sharing class JobApplicationREST {
     @HttpPatch
     global static String updateJobApplication(){
         RestRequest request = RestContext.request;
-        RestResponse response = RestContext.response;
         String jobApplicationId = request.requestURI.substring(
                                   request.requestURI.lastIndexOf('/')+1);
 
@@ -53,7 +51,6 @@ global with sharing class JobApplicationREST {
     @HttpDelete
     global static String deleteJobApplication() {
         RestRequest request = RestContext.request;
-        RestResponse response = RestContext.response;
 
         String jobApplicationName = request.requestURI.substring(
                                     request.requestURI.lastIndexOf('/')+1);
