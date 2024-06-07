@@ -55,11 +55,11 @@ global with sharing class JobApplicationREST {
         String jobApplicationName = request.requestURI.substring(
                                     request.requestURI.lastIndexOf('/')+1);
 
-        Job_Application__c jobApplication =  [SELECT Name FROM Job_Application__c WHERE Name = :jobApplicationName];
+        Job_Application__c jobApplication =  [SELECT Id FROM Job_Application__c WHERE Id = :jobApplicationName];
 
         delete jobApplication;
 
-        return getResultString('name', jobApplication.Name, 'deleted');
+        return getResultString('id', jobApplication.Id, 'deleted');
     }
 
     private static String getResultString(String itemName, String item, String operation){
