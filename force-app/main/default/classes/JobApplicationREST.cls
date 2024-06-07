@@ -52,10 +52,10 @@ global with sharing class JobApplicationREST {
     global static String deleteJobApplication() {
         RestRequest request = RestContext.request;
 
-        String jobApplicationName = request.requestURI.substring(
+        String jobApplicationId = request.requestURI.substring(
                                     request.requestURI.lastIndexOf('/')+1);
 
-        Job_Application__c jobApplication =  [SELECT Id FROM Job_Application__c WHERE Id = :jobApplicationName];
+        Job_Application__c jobApplication =  [SELECT Id FROM Job_Application__c WHERE Id = :jobApplicationId];
 
         delete jobApplication;
 
