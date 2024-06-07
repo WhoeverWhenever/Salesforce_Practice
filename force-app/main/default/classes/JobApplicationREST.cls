@@ -51,9 +51,8 @@ global with sharing class JobApplicationREST {
     @HttpDelete
     global static String deleteJobApplication() {
         RestRequest request = RestContext.request;
-
         String jobApplicationId = request.requestURI.substring(
-                                    request.requestURI.lastIndexOf('/')+1);
+                                  request.requestURI.lastIndexOf('/')+1);
 
         Job_Application__c jobApplication =  [SELECT Id FROM Job_Application__c WHERE Id = :jobApplicationId];
 
