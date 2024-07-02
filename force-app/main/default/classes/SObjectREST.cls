@@ -10,5 +10,4 @@ global with sharing class SObjectREST {
 
         return sObjectAPINames;
     }
-
 }
