@@ -7,5 +7,6 @@ trigger JobApplicationTrigger on Job_Application__c (after update) {
     for(Position__c position : positionsToUpdate){
         position.Status__c = 'Closed';
     }
+    
     update positionsToUpdate;
 }
