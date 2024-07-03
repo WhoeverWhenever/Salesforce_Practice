@@ -10,7 +10,8 @@ private with sharing class FieldStatisticsRESTTest {
     static void getFieldStatisticsTest() {
         RestRequest request = new RestRequest();
         String objectAPIName = 'Position__c';
-        request.requestUri = 'https://techmagic22-dev-ed.develop.my.salesforce.com/services/apexrest/api/dbstatistics';
+        String domainName = URL.getOrgDomainUrl().toExternalForm();
+        request.requestUri = domainName + '/services/apexrest/api/dbstatistics';
         request.httpMethod = 'GET';
         request.addParameter('objectAPIName', objectAPIName);
         RestContext.request = request;

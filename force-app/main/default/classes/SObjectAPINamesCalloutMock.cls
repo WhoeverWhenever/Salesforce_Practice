@@ -1,7 +1,8 @@
 @isTest
 global class SObjectAPINamesCalloutMock implements HttpCalloutMock {
     global HTTPResponse respond(HTTPRequest req) {
-        System.assertEquals('https://techmagic22-dev-ed.develop.my.salesforce.com/services/apexrest/api/SObjects', req.getEndpoint());
+        String domainName = URL.getOrgDomainUrl().toExternalForm();
+        System.assertEquals(domainName + '/services/apexrest/api/SObjects', req.getEndpoint());
         System.assertEquals('GET', req.getMethod());
         
         HttpResponse res = new HttpResponse();

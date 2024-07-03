@@ -1,9 +1,11 @@
 public with sharing class DBStatisticCalloutService {
+    final static String domainName = URL.getOrgDomainUrl().toExternalForm();
+
     public static HttpResponse getSObjectAPINames() {
         Http http = new Http();
         HttpRequest request = new HttpRequest();
         String authValue = 'Bearer '+ UserInfo.getSessionId();
-        request.setEndpoint('https://techmagic22-dev-ed.develop.my.salesforce.com/services/apexrest/api/SObjects');
+        request.setEndpoint(domainName + '/services/apexrest/api/SObjects');
         request.setMethod('GET');
         request.setHeader('Authorization', authValue);
         HttpResponse response = http.send(request);
@@ -21,7 +23,7 @@ public with sharing class DBStatisticCalloutService {
         Http http = new Http();
         HttpRequest request = new HttpRequest();
         String authValue = 'Bearer '+ UserInfo.getSessionId();
-        request.setEndpoint('https://techmagic22-dev-ed.develop.my.salesforce.com/services/apexrest/api/dbstatistics?objectAPIName=' + 
+        request.setEndpoint(domainName + '/services/apexrest/api/dbstatistics?objectAPIName=' + 
                              EncodingUtil.urlEncode(objectAPIName,'utf-8'));
         request.setMethod('GET');
         request.setHeader('Authorization', authValue);
