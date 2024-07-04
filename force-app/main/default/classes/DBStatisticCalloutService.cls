@@ -29,10 +29,25 @@ public with sharing class DBStatisticCalloutService {
         request.setHeader('Authorization', authValue);
         HttpResponse response = http.send(request);
         if(response.getStatusCode() == 200) {
-            Map<String, Object> results = (Map<String, Object>)JSON.deserializeUntyped(response.getBody());
-            for(String key : results.keySet()){
-                System.debug(key + ': ' + results.get(key));
-            }
+            String result = response.getBody();
+            System.debug(result);
+        }
+
+        return response;
+    }
+
+    public static HttpResponse getDBStatisticsResult(String jobId){
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        String authValue = 'Bearer '+ UserInfo.getSessionId();
+        request.setEndpoint(domainName + '/services/apexrest/api/dbstatisticsResult?JobId=' + 
+                             EncodingUtil.urlEncode(jobId,'utf-8'));
+        request.setMethod('GET');
+        request.setHeader('Authorization', authValue);
+        HttpResponse response = http.send(request);
+        if(response.getStatusCode() == 200) {
+            String result = response.getBody();
+            System.debug(result);
         }
 
         return response;

@@ -1,7 +1,7 @@
 @RestResource(urlMapping='/api/dbstatistics')
 global with sharing class FieldStatisticsREST {
     @HttpGet
-    global static Map<String, Integer> getFieldStatistics(){
+    global static Id getFieldStatistics(){
         RestRequest req = RestContext.request;
         Map<String, Integer> fieldStatistics = new Map<String, Integer>();
         List<String> fieldNames = new List<String>();
@@ -16,23 +16,9 @@ global with sharing class FieldStatisticsREST {
             fieldNames.add(value.getDescribe().getName());
         }
 
-        String fieldQuery = String.join(fieldNames, ',');
-        List<SObject> result = Database.query('SELECT ' + fieldQuery + ' FROM ' + objectAPIName);
-        
-        for (String fName: fieldNames){
-            Integer count = 0;
-            for(SObject o : result){
-                if(o.get(fName) != null){
-                    count++;
-                }
-            }
-            amount.add(count);
-        }
-        
-        for(Integer i = 0; i < fieldNames.size(); i++){
-            fieldStatistics.put(fieldNames[i], (amount[i]*100)/amount[0]);
-        }
+        FieldStatisticsBatchable countStatsInBatch = new FieldStatisticsBatchable(fieldNames, objectAPIName);
+        Id statisticJob = Database.executeBatch(countStatsInBatch, 2000);
 
-        return fieldStatistics;
+        return statisticJob;
     }
 }

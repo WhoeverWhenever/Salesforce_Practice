@@ -1,8 +1,8 @@
 @isTest
-private with sharing class FieldStatisticsRESTTest {
+private class FieldStatisticsRESTTest {
     @TestSetup
     static void setup(){
-        List<Position__c> testPositions = TestFactory.generatePositions(10000);
+        List<Position__c> testPositions = TestFactory.generatePositions(2000);
         insert testPositions;
     }
 
@@ -16,10 +16,13 @@ private with sharing class FieldStatisticsRESTTest {
         request.addParameter('objectAPIName', objectAPIName);
         RestContext.request = request;
 
-        Map<String, Integer> result = FieldStatisticsREST.getFieldStatistics();
+        Test.startTest();
+        Id resultId = FieldStatisticsREST.getFieldStatistics();
+        Test.stopTest();
+        
+        AsyncApexJob resultJob = [SELECT TotalJobItems FROM AsyncApexJob WHERE Id = :resultId];
 
-        System.Assert(result.size() > 0);
-        System.assertEquals(100, result.get('Id'), 'Id must have 100% filled statistic');
-        System.assertEquals(100, result.get('Name'), 'Name must have 100% filled statistic');
+        Assert.areEqual(1, resultJob.TotalJobItems);
+        Assert.isInstanceOfType(resultId, Id.class);
     }
 }
