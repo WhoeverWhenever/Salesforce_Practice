@@ -24,5 +24,4 @@ export default class ProgramSettingsSection extends LightningElement {
             return this.comboboxLabel.replace(' ', '');
         }
     }
-
 }
