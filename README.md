@@ -1,18 +1,22 @@
-# Salesforce DX Project: Next Steps
+# Learning project
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
-
-## How Do You Plan to Deploy Your Changes?
-
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
-
-## Configure Your Salesforce DX Project
-
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
-
-## Read All About It
-
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+1) Create Position, Candidate and Job Application objects in db.
+2) Create tabs for Position and Candidate objects. Add validation rules.
+3) Configure List Views and Layouts for objects.
+4) Add Record Types for the Position object.
+5) Set access levels for different types of users.
+6) Automate closing positions and sending emails to the manager about new application or review using flows.
+7) Create a table for job applications using Visualforce.
+8) Create methods to query the db (SOQL/SOSL).
+9) Create a page with a custom controller.
+10) Create a page, using LWC.
+11) Create a pagination component for the LWC component from the previous task.
+12) Error handling and user alert using custom labels.
+13) Create triggers for Position and Review objects.
+14) Use Async Apex to schedule positions updates.
+15) Configure Custom Metadata Types
+16) Configure Field Sets
+17) Override a standard button for the Candidate page.
+18) Create Apex REST service to interact with applications. Test it with Postman.
+19) Calculate DB statistic using Salesforce core and REST.
+20) Cover Apex classes with tests.
