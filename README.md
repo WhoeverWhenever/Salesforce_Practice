@@ -9,7 +9,7 @@
 7) Create a table for job applications using Visualforce.
 8) Create methods to query the db (SOQL/SOSL).
 9) Create a page with a custom controller.
-10) Create a page, using LWC.
+10) Create a page using LWC.
 11) Create a pagination component for the LWC component from the previous task.
 12) Error handling and user alert using custom labels.
 13) Create triggers for Position and Review objects.
